@@ -1,34 +1,19 @@
 if not LibStub then return end
 
-local dewdrop = LibStub("Dewdrop-2.0", true)
-local defaultIcon = "Interface\\Icons\\INV_Misc_Rune_06"
+local dewdrop 		= LibStub("Dewdrop-2.0", true)
+local icon 			= LibStub("LibDBIcon-1.0", true)
+local defaultIcon 	= "Interface\\Icons\\INV_Misc_Rune_06"
 
 obj = LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObject("Broker_Portals", {
 	type = "data source",
 	text = "Portals",
 	icon = defaultIcon,
 })
-local obj = obj
-local icon = LibStub("LibDBIcon-1.0", true)
-local menu = {
-	type =	"group",
-	args = {
-		header1 = {
-			type =	"header",
-			name =	"Portals:",
-			order =	01,
-		},
-		header2 = {
-			type =	"header",
-			name =	" ",
-			order =	02,
-		}
-	}
-}
-local portals = {}
-local methods = {}
-local needsUpdate = true
-local frame = CreateFrame("frame")
+local obj 		= obj
+local methods 	= {}
+local portals	= nil
+local frame 	= CreateFrame("frame")
+
 frame:SetScript("OnEvent", function(self, event, ...) if self[event] then return self[event](self, event, ...) end end)
 
 
@@ -60,28 +45,7 @@ local function findSpell(spellname)
 	end
 end
 
-local function UpdateSpells()
-	if portals then
-		for _,unTransSpell in ipairs(portals) do
-			
-			local spell = GetSpellInfo(unTransSpell)
-			local spellid = findSpell(spell)
-			
-			if spellid then	
-				methods[spell] = {
-					spellid = spellid,
-					text = spell,
-					secure = {
-						type = 'spell',
-						spell = spell,
-					}
-				}
-			end
-		end
-	end
-end
-
-local function UpdateMenu()
+local function SetupSpells()
 	local spells = {
 		Alliance = {
 			3561,  --TP:Stormwind
@@ -119,8 +83,34 @@ local function UpdateMenu()
 	end
 
 	spells = nil
-	UpdateSpells()
+end
+
+local function UpdateSpells()
+	if not portals then
+		SetupSpells()
+	end
 	
+	if portals then
+		for _,unTransSpell in ipairs(portals) do
+			
+			local spell = GetSpellInfo(unTransSpell)
+			local spellid = findSpell(spell)
+			
+			if spellid then	
+				methods[spell] = {
+					spellid = spellid,
+					text = spell,
+					secure = {
+						type = 'spell',
+						spell = spell,
+					}
+				}
+			end
+		end
+	end
+end
+
+local function UpdateMenu()
 	dewdrop:AddLine(
 		'text', "Portals:",
 		'isTitle', true
@@ -156,30 +146,32 @@ local function ShowHearthstone()
 end
 
 function frame:PLAYER_LOGIN()
-	if not PortalsDB then
-		PortalsDB = {}
-		PortalsDB.minimap = true
-	end
-	if icon then
-		icon:Register("Broker_Portals", obj, PortalsDB.minimap)
-	end
-	
-	self:RegisterEvent("SPELLS_CHANGED")
-	UpdateMenu()
+	-- if not PortalsDB then
+		-- PortalsDB = {}
+		-- PortalsDB.minimap = true
+	-- end
+	-- if icon then
+		-- icon:Register("Broker_Portals", obj, PortalsDB.minimap)
+	-- end
+		
+	self:RegisterEvent("SKILL_LINES_CHANGED")
 	self:Show()
 	self:UnregisterEvent("PLAYER_LOGIN")
 	self.PLAYER_LOGIN = nil
 end
 
-function frame:SPELLS_CHANGED()
+function frame:SKILL_LINES_CHANGED()
 	UpdateSpells()
 end
 
 function obj.OnClick(self, button)
-	if (not menu) or needsUpdate then
-		--UpdateMenu()
-	end
 	if button == "RightButton" then
-		dewdrop:Register(self, "children", function() 	UpdateMenu() end)
+		dewdrop:Open(self, "children", function() UpdateMenu() end)
 	end
+end
+
+if IsLoggedIn() then 
+	frame:PLAYER_LOGIN() 
+else 
+	frame:RegisterEvent("PLAYER_LOGIN") 
 end
