@@ -1,0 +1,19 @@
+## Interface: 30000
+## Title: Broker - |cffffffffPortals|r
+## Notes: Provides access to all Portal and Teleport spells on right click of one button.
+## Author: CrazyBenny of Stormrage-EU
+## X-Email: s_m AT centrum DOT cz
+## LastUpdate: @project-date-iso@
+## Version: @project-version@
+
+## SavedVariables: PortalsDB
+
+## LoadManagers: AddonLoader
+## X-LoadOn-Class: Mage
+
+libs\LibStub.lua
+libs\LibDataBroker-1.1.lua
+libs\LibDBIcon-1.0.lua
+libs\tektip.lua
+
+portals.lua
