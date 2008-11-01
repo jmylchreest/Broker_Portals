@@ -110,6 +110,21 @@ local function UpdateSpells()
 	end
 end
 
+local function ShowHearthstone()
+	local text, secure
+	local bindLoc = GetBindLocation()
+	if bindLoc then
+		text = "Inn: "..bindLoc
+		secure = {
+			type = 'item',
+			item = "Hearthstone",
+		}
+		return text, secure
+	else
+		return nil
+	end
+end
+
 local function UpdateMenu()
 	dewdrop:AddLine(
 		'text', "Portals:",
@@ -128,20 +143,18 @@ local function UpdateMenu()
 			)
 		end
 	end
-end
-
-local function ShowHearthstone()
-	local text, secure
-	local bindLoc = GetBindLocation()
-	if bindLoc then
-		text = "Inn: "..bindLoc
-		secure = {
-			type = 'item',
-			item = "Hearthstone",
-		}
-		return text, secure
-	else
-		return nil
+	
+	dewdrop:AddLine()
+	local bindText, bindSecure = ShowHearthstone()
+	if bindText then
+		dewdrop:AddLine(
+			'text', bindText,
+			'secure', bindSecure,
+			'func', function() return end,
+			'disabled', false,
+			'closeWhenClicked', true
+		)
+		dewdrop:AddLine()
 	end
 end
 
