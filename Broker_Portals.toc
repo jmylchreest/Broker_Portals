@@ -14,6 +14,11 @@
 libs\LibStub.lua
 libs\LibDataBroker-1.1.lua
 
+#@no-lib-strip@
+libs\AceLocale-3.0\AceLocale-3.0.lua
+libs\Dewdrop-2.0\Dewdrop-2.0.lua
+#@end-no-lib-strip@
+
 locale-enUS.lua
 locale-deDE.lua
 locale-ruRU.lua
