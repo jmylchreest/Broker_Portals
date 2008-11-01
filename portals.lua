@@ -1,6 +1,8 @@
 if not LibStub then return end
 
 local dewdrop 		= LibStub("Dewdrop-2.0", true)
+local L 			= LibStub("AceLocale-3.0"):GetLocale("Broker_Portals", true)
+
 local defaultIcon 	= "Interface\\Icons\\INV_Misc_Rune_06"
 
 obj = LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObject("Broker_Portals", {
