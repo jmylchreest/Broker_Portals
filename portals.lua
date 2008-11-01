@@ -1,12 +1,11 @@
 if not LibStub then return end
 
 local dewdrop 		= LibStub("Dewdrop-2.0", true)
-local icon 			= LibStub("LibDBIcon-1.0", true)
 local defaultIcon 	= "Interface\\Icons\\INV_Misc_Rune_06"
 
 obj = LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObject("Broker_Portals", {
 	type = "data source",
-	text = "Portals",
+	text = "Broker_Portals",
 	icon = defaultIcon,
 })
 local obj 		= obj
@@ -114,10 +113,10 @@ local function ShowHearthstone()
 	local text, secure
 	local bindLoc = GetBindLocation()
 	if bindLoc then
-		text = "Inn: "..bindLoc
+		text = L["Inn: "]..bindLoc
 		secure = {
 			type = 'item',
-			item = "Hearthstone",
+			item = L["Hearthstone"],
 		}
 		return text, secure
 	else
@@ -127,7 +126,7 @@ end
 
 local function UpdateMenu()
 	dewdrop:AddLine(
-		'text', "Portals:",
+		'text', "Broker_Portals",
 		'isTitle', true
 	)
 	dewdrop:AddLine()
@@ -156,6 +155,13 @@ local function UpdateMenu()
 		)
 		dewdrop:AddLine()
 	end
+	
+	dewdrop:AddLine(
+		'text', CLOSE,
+		'tooltipTitle', CLOSE,
+		'tooltipText', CLOSE_DESC,
+		'closeWhenClicked', true
+	)
 end
 
 function frame:PLAYER_LOGIN()
