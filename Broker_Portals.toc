@@ -13,6 +13,7 @@
 
 libs\LibStub.lua
 libs\LibDataBroker-1.1.lua
+libs\CallbackHandler-1.0.lua
 
 #@no-lib-strip@
 libs\AceLocale-3.0\AceLocale-3.0.lua
