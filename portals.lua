@@ -131,13 +131,13 @@ local function ShowHearthstone()
 end
 
 local function ToggleMinimap()
-	if PortalsDB.minimap.hide then
-		icon:Show("Broker_Portals")
-	else
+	local hide = not PortalsDB.minimap.hide
+	PortalsDB.minimap.hide = hide
+	if hide then
 		icon:Hide("Broker_Portals")
+	else
+		icon:Show("Broker_Portals")
 	end
-	
-	PortalsDB.minimap.hide = not PortalsDB.minimap.hide
 end
 
 local function UpdateMenu()
@@ -189,10 +189,11 @@ end
 
 function frame:PLAYER_LOGIN()
 	-- PortalsDB.minimap is there for smooth upgrade of SVs from old version
-	if not PortalsDB or PortalsDB.minimap then
+	if (not PortalsDB) or (PortalsDB.version ~= 1) then
 		PortalsDB = {}
 		PortalsDB.minimap = {}
 		PortalsDB.minimap.hide = false
+		PortalsDB.version = 1
 	end
 	if icon then
 		icon:Register("Broker_Portals", obj, PortalsDB.minimap)
