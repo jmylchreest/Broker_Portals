@@ -2,6 +2,7 @@ if not LibStub then return end
 
 local dewdrop 		= LibStub("Dewdrop-2.0", true)
 local L 			= LibStub("AceLocale-3.0"):GetLocale("Broker_Portals", true)
+local icon			= LibStub("LibDBIcon-1.0")
 
 local defaultIcon 	= "Interface\\Icons\\INV_Misc_Rune_06"
 
@@ -16,6 +17,8 @@ local portals	= nil
 local frame 	= CreateFrame("frame")
 
 frame:SetScript("OnEvent", function(self, event, ...) if self[event] then return self[event](self, event, ...) end end)
+frame:RegisterEvent("PLAYER_LOGIN")
+frame:RegisterEvent("SKILL_LINES_CHANGED")
 
 
 local function pairsByKeys(t)
@@ -94,13 +97,14 @@ local function UpdateSpells()
 	if portals then
 		for _,unTransSpell in ipairs(portals) do
 			
-			local spell = GetSpellInfo(unTransSpell)
+			local spell, _, spellIcon = GetSpellInfo(unTransSpell)
 			local spellid = findSpell(spell)
 			
 			if spellid then	
 				methods[spell] = {
 					spellid = spellid,
 					text = spell,
+					spellIcon = spellIcon,
 					secure = {
 						type = 'spell',
 						spell = spell,
@@ -126,6 +130,16 @@ local function ShowHearthstone()
 	end
 end
 
+local function ToggleMinimap()
+	if PortalsDB.minimap.hide then
+		icon:Show("Broker_Portals")
+	else
+		icon:Hide("Broker_Portals")
+	end
+	
+	PortalsDB.minimap.hide = not PortalsDB.minimap.hide
+end
+
 local function UpdateMenu()
 	dewdrop:AddLine(
 		'text', "Broker_Portals",
@@ -138,8 +152,8 @@ local function UpdateMenu()
 			dewdrop:AddLine(
 				'text', v.text,
 				'secure', v.secure,
+				'icon', v.spellIcon,
 				'func', function() return end,
-				'disabled', false,
 				'closeWhenClicked', true
 			)
 		end
@@ -151,12 +165,19 @@ local function UpdateMenu()
 		dewdrop:AddLine(
 			'text', bindText,
 			'secure', bindSecure,
+			'icon', "Interface\\Icons\\INV_Misc_Rune_01",
 			'func', function() return end,
-			'disabled', false,
 			'closeWhenClicked', true
 		)
 		dewdrop:AddLine()
 	end
+	
+	dewdrop:AddLine(
+		'text', L["Attach to minimap"],
+		'checked', not PortalsDB.minimap.hide,
+		'func', function() ToggleMinimap() end,
+		'closeWhenClicked', true
+	)
 	
 	dewdrop:AddLine(
 		'text', CLOSE,
@@ -167,18 +188,17 @@ local function UpdateMenu()
 end
 
 function frame:PLAYER_LOGIN()
-	-- if not PortalsDB then
-		-- PortalsDB = {}
-		-- PortalsDB.minimap = true
-	-- end
-	-- if icon then
-		-- icon:Register("Broker_Portals", obj, PortalsDB.minimap)
-	-- end
-		
-	self:RegisterEvent("SKILL_LINES_CHANGED")
-	self:Show()
+	-- PortalsDB.minimap is there for smooth upgrade of SVs from old version
+	if not PortalsDB or PortalsDB.minimap then
+		PortalsDB = {}
+		PortalsDB.minimap = {}
+		PortalsDB.minimap.hide = false
+	end
+	if icon then
+		icon:Register("Broker_Portals", obj, PortalsDB.minimap)
+	end
+
 	self:UnregisterEvent("PLAYER_LOGIN")
-	self.PLAYER_LOGIN = nil
 end
 
 function frame:SKILL_LINES_CHANGED()
@@ -191,8 +211,3 @@ function obj.OnClick(self, button)
 	end
 end
 
-if IsLoggedIn() then 
-	frame:PLAYER_LOGIN() 
-else 
-	frame:RegisterEvent("PLAYER_LOGIN") 
-end
