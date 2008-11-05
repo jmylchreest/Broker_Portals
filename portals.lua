@@ -142,7 +142,7 @@ local function ToggleMinimap()
 end
 
 local function UpdateIcon(icon)
-	obj:SetIcon(icon)
+	obj.icon = icon
 end
 
 local function UpdateMenu()
