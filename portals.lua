@@ -4,7 +4,8 @@ local dewdrop 		= LibStub("Dewdrop-2.0", true)
 local L 			= LibStub("AceLocale-3.0"):GetLocale("Broker_Portals", true)
 local icon			= LibStub("LibDBIcon-1.0")
 
-local defaultIcon 	= "Interface\\Icons\\INV_Misc_Rune_06"
+local defaultIcon 		= "Interface\\Icons\\INV_Misc_Rune_06"
+local hearthstoneIcon 	= "Interface\\Icons\\INV_Misc_Rune_01"
 
 obj = LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObject("Broker_Portals", {
 	type = "data source",
@@ -102,12 +103,12 @@ local function UpdateSpells()
 			
 			if spellid then	
 				methods[spell] = {
-					spellid = spellid,
-					text = spell,
-					spellIcon = spellIcon,
-					secure = {
-						type = 'spell',
-						spell = spell,
+					spellid 	= spellid,
+					text 		= spell,
+					spellIcon 	= spellIcon,
+					secure 		= {
+						type 		= 'spell',
+						spell 		= spell,
 					}
 				}
 			end
@@ -119,10 +120,10 @@ local function ShowHearthstone()
 	local text, secure
 	local bindLoc = GetBindLocation()
 	if bindLoc then
-		text = L["Inn: "]..bindLoc
-		secure = {
-			type = 'item',
-			item = L["Hearthstone"],
+		text 	= L["Inn: "]..bindLoc
+		secure 	= {
+			type 	= 'item',
+			item 	= L["Hearthstone"],
 		}
 		return text, secure
 	else
@@ -140,20 +141,24 @@ local function ToggleMinimap()
 	end
 end
 
+local function UpdateIcon(icon)
+	obj:SetIcon(icon)
+end
+
 local function UpdateMenu()
 	dewdrop:AddLine(
-		'text', "Broker_Portals",
-		'isTitle', true
+		'text', 	"Broker_Portals",
+		'isTitle', 	true
 	)
 	dewdrop:AddLine()
 
 	for k,v in pairsByKeys(methods) do
 		if v.secure then
 			dewdrop:AddLine(
-				'text', v.text,
-				'secure', v.secure,
-				'icon', v.spellIcon,
-				'func', function() return end,
+				'text', 			v.text,
+				'secure', 			v.secure,
+				'icon', 			v.spellIcon,
+				'func', 			function() UpdateIcon(v.spellIcon) end,
 				'closeWhenClicked', true
 			)
 		end
@@ -163,26 +168,26 @@ local function UpdateMenu()
 	local bindText, bindSecure = ShowHearthstone()
 	if bindText then
 		dewdrop:AddLine(
-			'text', bindText,
-			'secure', bindSecure,
-			'icon', "Interface\\Icons\\INV_Misc_Rune_01",
-			'func', function() return end,
+			'text', 			bindText,
+			'secure', 			bindSecure,
+			'icon', 			hearthstoneIcon,
+			'func', 			function() UpdateIcon(hearthstoneIcon) end,
 			'closeWhenClicked', true
 		)
 		dewdrop:AddLine()
 	end
 	
 	dewdrop:AddLine(
-		'text', L["Attach to minimap"],
-		'checked', not PortalsDB.minimap.hide,
-		'func', function() ToggleMinimap() end,
+		'text', 			L["Attach to minimap"],
+		'checked', 			not PortalsDB.minimap.hide,
+		'func', 			function() ToggleMinimap() end,
 		'closeWhenClicked', true
 	)
 	
 	dewdrop:AddLine(
-		'text', CLOSE,
-		'tooltipTitle', CLOSE,
-		'tooltipText', CLOSE_DESC,
+		'text', 			CLOSE,
+		'tooltipTitle', 	CLOSE,
+		'tooltipText', 		CLOSE_DESC,
 		'closeWhenClicked', true
 	)
 end
@@ -190,10 +195,10 @@ end
 function frame:PLAYER_LOGIN()
 	-- PortalsDB.minimap is there for smooth upgrade of SVs from old version
 	if (not PortalsDB) or (PortalsDB.version ~= 1) then
-		PortalsDB = {}
-		PortalsDB.minimap = {}
-		PortalsDB.minimap.hide = false
-		PortalsDB.version = 1
+		PortalsDB 				= {}
+		PortalsDB.minimap 		= {}
+		PortalsDB.minimap.hide 	= false
+		PortalsDB.version 		= 1
 	end
 	if icon then
 		icon:Register("Broker_Portals", obj, PortalsDB.minimap)
