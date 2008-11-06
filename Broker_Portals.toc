@@ -12,10 +12,11 @@
 ## X-LoadOn-Class: Mage
 
 libs\LibStub.lua
-libs\LibDataBroker-1.1.lua
 libs\CallbackHandler-1.0.lua
+libs\LibDataBroker-1.1.lua
 
 #@no-lib-strip@
+libs\Dewdrop-2.0\AceLibrary\AceLibrary.lua
 libs\AceLocale-3.0\AceLocale-3.0.lua
 libs\Dewdrop-2.0\Dewdrop-2.0.lua
 libs\LibDBIcon-1.0\LibDBIcon-1.0\LibDBIcon-1.0.lua
