@@ -240,3 +240,7 @@ function obj.OnEnter(self)
 
 	GameTooltip:Show()
 end
+
+-- slashcommand definition
+SlashCmdList["BROKER_PORTALS"] = function() ToggleMinimap() end
+SLASH_BROKER_PORTALS1 =  "/portals"
