@@ -1,7 +1,7 @@
 if not LibStub then return end
 
+local L 			= LibStub("AceLocale-3.0"):GetLocale("Broker_Portals")
 local dewdrop 		= LibStub("Dewdrop-2.0", true)
-local L 			= LibStub("AceLocale-3.0"):GetLocale("Broker_Portals", true)
 local icon			= LibStub("LibDBIcon-1.0")
 
 local defaultIcon 		= "Interface\\Icons\\INV_Misc_Rune_06"
