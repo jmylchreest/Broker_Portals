@@ -1,6 +1,5 @@
 if not LibStub then return end
 
-local L 			= LibStub("AceLocale-3.0"):GetLocale("Broker_Portals")
 local dewdrop 		= LibStub("Dewdrop-2.0", true)
 local icon			= LibStub("LibDBIcon-1.0")
 
@@ -120,10 +119,10 @@ local function ShowHearthstone()
 	local text, secure
 	local bindLoc = GetBindLocation()
 	if bindLoc then
-		text 	= L["Inn: "]..bindLoc
+		text 	= INN..bindLoc
 		secure 	= {
 			type 	= 'item',
-			item 	= L["Hearthstone"],
+			item 	= HEARTHSTONE,
 		}
 		return text, secure
 	else
@@ -178,7 +177,7 @@ local function UpdateMenu()
 	end
 	
 	dewdrop:AddLine(
-		'text', 			L["Attach to minimap"],
+		'text', 			ATT_MINIMAP,
 		'checked', 			not PortalsDB.minimap.hide,
 		'func', 			function() ToggleMinimap() end,
 		'closeWhenClicked', true
@@ -236,7 +235,7 @@ function obj.OnEnter(self)
 	GameTooltip:ClearLines()
 
 	GameTooltip:AddLine("Broker Portals")
-	GameTooltip:AddDoubleLine(L["Right-Click"], L["to see list of spells"], 0.9, 0.6, 0.2, 0.2, 1, 0.2)
+	GameTooltip:AddDoubleLine(RCLICK, SEE_SPELLS, 0.9, 0.6, 0.2, 0.2, 1, 0.2)
 
 	GameTooltip:Show()
 end
