@@ -58,12 +58,14 @@ local function SetupSpells()
 			32271, --TP:Exodar
 			49359, --TP:Theramore
 			33690, --TP:Shattrath
+			53140, --TP:Dalaran
 			10059, --P:Stormwind
 			11416, --P:Ironforge
 			11419, --P:Darnassus
 			32266, --P:Exodar
 			49360, --P:Theramore
 			33691, --P:Shattrath
+			53142, --P:Dalaran
 		},
 		Horde = {
 			3563,  --TP:Undercity
@@ -72,12 +74,14 @@ local function SetupSpells()
 			32272, --TP:Silvermoon
 			49358, --TP:Stonard
 			35715, --TP:Shattrath
+			53140, --TP:Dalaran
 			11418, --P:Undercity
 			11420, --P:Thunder Bluff
 			11417, --P:Orgrimmar
 			32267, --P:Silvermoon
 			49361, --P:Stonard
 			35717, --P:Shattrath
+			53142, --P:Dalaran
 		}
 	}
 	
