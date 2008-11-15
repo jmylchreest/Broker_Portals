@@ -88,6 +88,18 @@ local function SetupSpells()
 	local _, class = UnitClass("player")
 	if class == "MAGE" then
 		portals = spells[UnitFactionGroup("player")]
+	elseif class == "DEATH KNIGHT" then
+		portals = {
+			50977 --Death Gate
+			}
+	elseif class == "DRUID" then
+		portals = {
+			18960 --TP:Moonglade
+			}
+	elseif class == "SHAMAN" then
+		portals = {
+			556 --Astral Recall
+			}
 	end
 
 	spells = nil
