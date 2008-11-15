@@ -88,7 +88,7 @@ local function SetupSpells()
 	local _, class = UnitClass("player")
 	if class == "MAGE" then
 		portals = spells[UnitFactionGroup("player")]
-	elseif class == "DEATH KNIGHT" then
+	elseif class == "DEATHKNIGHT" then
 		portals = {
 			50977 --Death Gate
 			}
