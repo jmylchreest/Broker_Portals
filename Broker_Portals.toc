@@ -8,9 +8,6 @@
 
 ## SavedVariables: PortalsDB
 
-## LoadManagers: AddonLoader
-## X-LoadOn-Class: Mage, Druid, Shaman, DeathKnight
-
 libs\LibStub.lua
 libs\CallbackHandler-1.0.lua
 libs\LibDataBroker-1.1.lua
