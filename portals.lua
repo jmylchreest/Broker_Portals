@@ -140,7 +140,7 @@ local function ShowHearthstone()
 	local text, secure
 	local bindLoc = GetBindLocation()
 	if bindLoc then
-		text 	= INN..bindLoc
+		text 	= L["INN"]..bindLoc
 		secure 	= {
 			type 	= 'item',
 			item 	= L["HEARTHSTONE"],
@@ -279,7 +279,7 @@ function obj.OnEnter(self)
 	GameTooltip:AddLine("Broker Portals")
 	GameTooltip:AddDoubleLine(L["RCLICK"], L["SEE_SPELLS"], 0.9, 0.6, 0.2, 0.2, 1, 0.2)
   GameTooltip:AddLine(" ")
-  GameTooltip:AddDoubleLine(L["HEARTHSTONE"], getHearthCooldown(), 0.9, 0.6, 0.2, 0.2, 1, 0.2)
+  GameTooltip:AddDoubleLine(L["HEARTHSTONE"].." : "..GetBindLocation(), getHearthCooldown(), 0.9, 0.6, 0.2, 0.2, 1, 0.2)
 
 	GameTooltip:Show()
 end
