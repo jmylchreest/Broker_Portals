@@ -1,8 +1,6 @@
 if GetLocale() == "ruRU" then
-	INN 		= "Таверна: "
-	RCLICK 		= "ПКМ"
-	SEE_SPELLS 	= "Для открытия списка заклинаний"
-	HEARTHSTONE	= "Камень возвращения"
-	ATT_MINIMAP = "Закрепить у миникарты"
+
+--@localization(locale="ruRU", format="lua_additive_table", handle-unlocalized="comment")@
+
 end
 

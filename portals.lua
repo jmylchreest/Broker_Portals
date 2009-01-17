@@ -244,12 +244,12 @@ local function getHearthCooldown()
           return L["READY"]
         end
 
-        return cooldown
+        return cooldown.." "..L["MIN"]
       end
     end
   end
   
-  return "Not avaliable!"
+  return L["N/A"]
 end
 
 -- All credit for this func goes to Tekkub and his picoGuild!
@@ -279,7 +279,7 @@ function obj.OnEnter(self)
 	GameTooltip:AddLine("Broker Portals")
 	GameTooltip:AddDoubleLine(L["RCLICK"], L["SEE_SPELLS"], 0.9, 0.6, 0.2, 0.2, 1, 0.2)
   GameTooltip:AddLine(" ")
-  GameTooltip:AddDoubleLine(L["HEARTHSTONE"], getHearthCooldown()..L["MINS"], 0.9, 0.6, 0.2, 0.2, 1, 0.2)
+  GameTooltip:AddDoubleLine(L["HEARTHSTONE"], getHearthCooldown(), 0.9, 0.6, 0.2, 0.2, 1, 0.2)
 
 	GameTooltip:Show()
 end
