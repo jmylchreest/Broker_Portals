@@ -9,6 +9,8 @@ local hearthstoneIcon 	= "Interface\\Icons\\INV_Misc_Rune_01"
 local string_find = string.find
 local math_floor = math.floor
 
+local L = L
+
 obj = LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObject("Broker_Portals", {
 	type = "data source",
 	text = "Broker_Portals",
@@ -141,7 +143,7 @@ local function ShowHearthstone()
 		text 	= INN..bindLoc
 		secure 	= {
 			type 	= 'item',
-			item 	= HEARTHSTONE,
+			item 	= L["HEARTHSTONE"],
 		}
 		return text, secure
 	else
@@ -196,7 +198,7 @@ local function UpdateMenu()
 	end
 	
 	dewdrop:AddLine(
-		'text', 			ATT_MINIMAP,
+		'text', 			L["ATT_MINIMAP"],
 		'checked', 			not PortalsDB.minimap.hide,
 		'func', 			function() ToggleMinimap() end,
 		'closeWhenClicked', true
@@ -233,11 +235,15 @@ local function getHearthCooldown()
   for bag = 0, 4 do
     for slot = 1, GetContainerNumSlots(bag) do
       local item = GetContainerItemLink(bag, slot)
-      if string_find(item, HEARTHSTONE) then
+      if string_find(item, L["HEARTHSTONE"]) then
         startTime, duration = GetContainerItemCooldown(bag, slot)
         cooldown = duration - (GetTime() - startTime)
         cooldown = cooldown / 60
         cooldown = math_floor(cooldown)
+        if cooldown <= 0 then
+          return L["READY"]
+        end
+
         return cooldown
       end
     end
@@ -271,9 +277,9 @@ function obj.OnEnter(self)
 	GameTooltip:ClearLines()
 
 	GameTooltip:AddLine("Broker Portals")
-	GameTooltip:AddDoubleLine(RCLICK, SEE_SPELLS, 0.9, 0.6, 0.2, 0.2, 1, 0.2)
+	GameTooltip:AddDoubleLine(L["RCLICK"], L["SEE_SPELLS"], 0.9, 0.6, 0.2, 0.2, 1, 0.2)
   GameTooltip:AddLine(" ")
-  GameTooltip:AddDoubleLine(HEARTHSTONE, getHearthCooldown()..MINS, 0.9, 0.6, 0.2, 0.2, 1, 0.2)
+  GameTooltip:AddDoubleLine(L["HEARTHSTONE"], getHearthCooldown()..L["MINS"], 0.9, 0.6, 0.2, 0.2, 1, 0.2)
 
 	GameTooltip:Show()
 end
