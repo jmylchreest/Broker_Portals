@@ -6,6 +6,9 @@ local icon			= LibStub("LibDBIcon-1.0")
 local defaultIcon 		= "Interface\\Icons\\INV_Misc_Rune_06"
 local hearthstoneIcon 	= "Interface\\Icons\\INV_Misc_Rune_01"
 
+local string_find = string.find
+local math_floor = math.floor
+
 obj = LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObject("Broker_Portals", {
 	type = "data source",
 	text = "Broker_Portals",
@@ -226,6 +229,23 @@ function frame:SKILL_LINES_CHANGED()
 	UpdateSpells()
 end
 
+local function getHearthCooldown()
+  for bag = 0, 4 do
+    for slot = 1, GetContainerNumSlots(bag) do
+      local item = GetContainerItemLink(bag, slot)
+      if string_find(item, HEARTHSTONE) then
+        startTime, duration = GetContainerItemCooldown(bag, slot)
+        cooldown = duration - (GetTime() - startTime)
+        cooldown = cooldown / 60
+        cooldown = math_floor(cooldown)
+        return cooldown
+      end
+    end
+  end
+  
+  return "Not avaliable!"
+end
+
 -- All credit for this func goes to Tekkub and his picoGuild!
 local function GetTipAnchor(frame)
 		local x,y = frame:GetCenter()
@@ -252,6 +272,8 @@ function obj.OnEnter(self)
 
 	GameTooltip:AddLine("Broker Portals")
 	GameTooltip:AddDoubleLine(RCLICK, SEE_SPELLS, 0.9, 0.6, 0.2, 0.2, 1, 0.2)
+  GameTooltip:AddLine(" ")
+  GameTooltip:AddDoubleLine(HEARTHSTONE, getHearthCooldown()..MINS, 0.9, 0.6, 0.2, 0.2, 1, 0.2)
 
 	GameTooltip:Show()
 end
