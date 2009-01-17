@@ -1,6 +1,1 @@
-INN 		= "Inn: "
-RCLICK 		= "Right-Click"
-SEE_SPELLS 	= "to see list of spells"
-HEARTHSTONE = "Hearthstone"
-ATT_MINIMAP = "Attach to minimap"
-MINS = " mins"
+--@localization(locale="enUS", format="lua_table", handle-unlocalized="ignore")@
