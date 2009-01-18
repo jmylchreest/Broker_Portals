@@ -235,16 +235,18 @@ local function getHearthCooldown()
   for bag = 0, 4 do
     for slot = 1, GetContainerNumSlots(bag) do
       local item = GetContainerItemLink(bag, slot)
-      if string_find(item, L["HEARTHSTONE"]) then
-        startTime, duration = GetContainerItemCooldown(bag, slot)
-        cooldown = duration - (GetTime() - startTime)
-        cooldown = cooldown / 60
-        cooldown = math_floor(cooldown)
-        if cooldown <= 0 then
-          return L["READY"]
-        end
+      if item then
+        if string_find(item, L["HEARTHSTONE"]) then
+          startTime, duration = GetContainerItemCooldown(bag, slot)
+          cooldown = duration - (GetTime() - startTime)
+          cooldown = cooldown / 60
+          cooldown = math_floor(cooldown)
+          if cooldown <= 0 then
+            return L["READY"]
+          end
 
-        return cooldown.." "..L["MIN"]
+          return cooldown.." "..L["MIN"]
+        end
       end
     end
   end
