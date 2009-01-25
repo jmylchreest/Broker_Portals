@@ -232,6 +232,8 @@ function frame:SKILL_LINES_CHANGED()
 end
 
 local function getHearthCooldown()
+	local cooldown, startTime, duration
+
   for bag = 0, 4 do
     for slot = 1, GetContainerNumSlots(bag) do
       local item = GetContainerItemLink(bag, slot)
@@ -252,6 +254,23 @@ local function getHearthCooldown()
   end
   
   return L["N/A"]
+end
+
+local function getReagentCount(name)
+	local count = 0
+  for bag = 0, 4 do
+    for slot = 1, GetContainerNumSlots(bag) do
+      local item = GetContainerItemLink(bag, slot)
+      if item then
+        if string_find(item, name) then
+          local _, itemCount = GetContainerItemInfo(bag, slot)
+          count = count + itemCount
+        end
+      end
+    end
+  end
+	
+	return count
 end
 
 -- All credit for this func goes to Tekkub and his picoGuild!
@@ -282,6 +301,8 @@ function obj.OnEnter(self)
 	GameTooltip:AddDoubleLine(L["RCLICK"], L["SEE_SPELLS"], 0.9, 0.6, 0.2, 0.2, 1, 0.2)
   GameTooltip:AddLine(" ")
   GameTooltip:AddDoubleLine(L["HEARTHSTONE"].." : "..GetBindLocation(), getHearthCooldown(), 0.9, 0.6, 0.2, 0.2, 1, 0.2)
+	GameTooltip:AddLine(" ")
+	GameTooltip:AddDoubleLine(L["TP_P"], getReagentCount(L["TP_RUNE"]).."/"..getReagentCount(L["P_RUNE"]), 0.9, 0.6, 0.2, 0.2, 1, 0.2)
 
 	GameTooltip:Show()
 end
