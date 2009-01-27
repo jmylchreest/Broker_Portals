@@ -45,12 +45,19 @@ local function pairsByKeys(t)
 	return iter
 end
 
-local function findSpell(spellname)
-	for i = 1,180 do
+local function findSpell(spellName)
+	local i = 1
+	while true do
 		local s = GetSpellName(i, BOOKTYPE_SPELL)
-		if s == spellname then
+		if not s then
+			break
+		end
+		
+		if s == spellName then
 			return i
 		end
+		
+		i = i + 1
 	end
 end
 
