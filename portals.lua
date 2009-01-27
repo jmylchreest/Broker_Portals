@@ -1,10 +1,10 @@
 if not LibStub then return end
 
-local dewdrop 		= LibStub("Dewdrop-2.0", true)
-local icon			= LibStub("LibDBIcon-1.0")
+local dewdrop = LibStub("Dewdrop-2.0", true)
+local icon = LibStub("LibDBIcon-1.0")
 
-local defaultIcon 		= "Interface\\Icons\\INV_Misc_Rune_06"
-local hearthstoneIcon 	= "Interface\\Icons\\INV_Misc_Rune_01"
+local defaultIcon = "Interface\\Icons\\INV_Misc_Rune_06"
+local hearthstoneIcon	= "Interface\\Icons\\INV_Misc_Rune_01"
 
 local string_find = string.find
 local math_floor = math.floor
@@ -16,10 +16,10 @@ obj = LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObject("Broker_Portals", {
 	text = "Broker_Portals",
 	icon = defaultIcon,
 })
-local obj 		= obj
-local methods 	= {}
+local obj = obj
+local methods	= {}
 local portals	= nil
-local frame 	= CreateFrame("frame")
+local frame = CreateFrame("frame")
 
 frame:SetScript("OnEvent", function(self, event, ...) if self[event] then return self[event](self, event, ...) end end)
 frame:RegisterEvent("PLAYER_LOGIN")
@@ -52,6 +52,21 @@ local function findSpell(spellname)
 			return i
 		end
 	end
+end
+
+local function hasItem(itemName)
+	for bag = 0, 4 do
+    for slot = 1, GetContainerNumSlots(bag) do
+      local item = GetContainerItemLink(bag, slot)
+      if item then
+        if string_find(item, itemName) then
+          return true
+        end
+      end
+    end
+  end
+	
+	return false
 end
 
 local function SetupSpells()
@@ -123,12 +138,12 @@ local function UpdateSpells()
 			
 			if spellid then	
 				methods[spell] = {
-					spellid 	= spellid,
-					text 		= spell,
-					spellIcon 	= spellIcon,
-					secure 		= {
-						type 		= 'spell',
-						spell 		= spell,
+					spellid = spellid,
+					text = spell,
+					spellIcon = spellIcon,
+					secure = {
+						type = 'spell',
+						spell = spell,
 					}
 				}
 			end
@@ -136,102 +151,11 @@ local function UpdateSpells()
 	end
 end
 
-local function ShowHearthstone()
-	local text, secure
-	local bindLoc = GetBindLocation()
-	if bindLoc then
-		text 	= L["INN"]..bindLoc
-		secure 	= {
-			type 	= 'item',
-			item 	= L["HEARTHSTONE"],
-		}
-		return text, secure
-	else
-		return nil
-	end
-end
-
-local function ToggleMinimap()
-	local hide = not PortalsDB.minimap.hide
-	PortalsDB.minimap.hide = hide
-	if hide then
-		icon:Hide("Broker_Portals")
-	else
-		icon:Show("Broker_Portals")
-	end
-end
-
 local function UpdateIcon(icon)
 	obj.icon = icon
 end
 
-local function UpdateMenu()
-	dewdrop:AddLine(
-		'text', 	"Broker_Portals",
-		'isTitle', 	true
-	)
-	dewdrop:AddLine()
-
-	for k,v in pairsByKeys(methods) do
-		if v.secure then
-			dewdrop:AddLine(
-				'text', 			v.text,
-				'secure', 			v.secure,
-				'icon', 			v.spellIcon,
-				'func', 			function() UpdateIcon(v.spellIcon) end,
-				'closeWhenClicked', true
-			)
-		end
-	end
-	
-	dewdrop:AddLine()
-	local bindText, bindSecure = ShowHearthstone()
-	if bindText then
-		dewdrop:AddLine(
-			'text', 			bindText,
-			'secure', 			bindSecure,
-			'icon', 			hearthstoneIcon,
-			'func', 			function() UpdateIcon(hearthstoneIcon) end,
-			'closeWhenClicked', true
-		)
-		dewdrop:AddLine()
-	end
-	
-	dewdrop:AddLine(
-		'text', 			L["ATT_MINIMAP"],
-		'checked', 			not PortalsDB.minimap.hide,
-		'func', 			function() ToggleMinimap() end,
-		'closeWhenClicked', true
-	)
-	
-	dewdrop:AddLine(
-		'text', 			CLOSE,
-		'tooltipTitle', 	CLOSE,
-		'tooltipText', 		CLOSE_DESC,
-		'closeWhenClicked', true
-	)
-end
-
-function frame:PLAYER_LOGIN()
-	-- PortalsDB.minimap is there for smooth upgrade of SVs from old version
-	if (not PortalsDB) or (PortalsDB.version ~= 1) then
-		PortalsDB 				= {}
-		PortalsDB.minimap 		= {}
-		PortalsDB.minimap.hide 	= false
-		PortalsDB.version 		= 1
-	end
-	if icon then
-		icon:Register("Broker_Portals", obj, PortalsDB.minimap)
-	end
-
-	self:UnregisterEvent("PLAYER_LOGIN")
-end
-
-function frame:SKILL_LINES_CHANGED()
-	UpdateSpells()
-end
-
-local function getHearthCooldown()
+local function GetHearthCooldown()
 	local cooldown, startTime, duration
 
   for bag = 0, 4 do
@@ -254,6 +178,108 @@ local function getHearthCooldown()
   end
   
   return L["N/A"]
+end
+
+local function ShowHearthstone()
+	local text, secure
+	
+	local hsCd = GetHearthCooldown()
+	if hsCd == L["READY"] then
+		local bindLoc = GetBindLocation()
+		if bindLoc then
+			text = L["INN"]..bindLoc
+			secure = {
+				type = 'item',
+				item = L["HEARTHSTONE"],
+			}
+		end
+	else
+		if hasItem(L["SCROLL_3"]) then
+			text = L["SCROLL_3"]
+			secure = {
+				type = 'item',
+				item = L["SCROLL_3"],
+			}
+		end
+	end
+	
+	if secure ~= nil then
+		dewdrop:AddLine(
+			'text', text,
+			'secure', secure,
+			'icon', hearthstoneIcon,
+			'func', function() UpdateIcon(hearthstoneIcon) end,
+			'closeWhenClicked', true
+		)
+		dewdrop:AddLine()
+	end
+end
+
+local function ToggleMinimap()
+	local hide = not PortalsDB.minimap.hide
+	PortalsDB.minimap.hide = hide
+	if hide then
+		icon:Hide("Broker_Portals")
+	else
+		icon:Show("Broker_Portals")
+	end
+end
+
+local function UpdateMenu()
+	dewdrop:AddLine(
+		'text', 	"Broker_Portals",
+		'isTitle', 	true
+	)
+	dewdrop:AddLine()
+
+	for k,v in pairsByKeys(methods) do
+		if v.secure then
+			dewdrop:AddLine(
+				'text', v.text,
+				'secure',	v.secure,
+				'icon', v.spellIcon,
+				'func', function() UpdateIcon(v.spellIcon) end,
+				'closeWhenClicked', true
+			)
+		end
+	end
+	
+	dewdrop:AddLine()
+	
+	ShowHearthstone()
+	
+	dewdrop:AddLine(
+		'text', L["ATT_MINIMAP"],
+		'checked', not PortalsDB.minimap.hide,
+		'func', function() ToggleMinimap() end,
+		'closeWhenClicked', true
+	)
+	
+	dewdrop:AddLine(
+		'text', CLOSE,
+		'tooltipTitle', CLOSE,
+		'tooltipText', CLOSE_DESC,
+		'closeWhenClicked', true
+	)
+end
+
+function frame:PLAYER_LOGIN()
+	-- PortalsDB.minimap is there for smooth upgrade of SVs from old version
+	if (not PortalsDB) or (PortalsDB.version ~= 1) then
+		PortalsDB = {}
+		PortalsDB.minimap = {}
+		PortalsDB.minimap.hide = false
+		PortalsDB.version = 1
+	end
+	if icon then
+		icon:Register("Broker_Portals", obj, PortalsDB.minimap)
+	end
+
+	self:UnregisterEvent("PLAYER_LOGIN")
+end
+
+function frame:SKILL_LINES_CHANGED()
+	UpdateSpells()
 end
 
 local function getReagentCount(name)
@@ -300,7 +326,7 @@ function obj.OnEnter(self)
 	GameTooltip:AddLine("Broker Portals")
 	GameTooltip:AddDoubleLine(L["RCLICK"], L["SEE_SPELLS"], 0.9, 0.6, 0.2, 0.2, 1, 0.2)
   GameTooltip:AddLine(" ")
-  GameTooltip:AddDoubleLine(L["HEARTHSTONE"].." : "..GetBindLocation(), getHearthCooldown(), 0.9, 0.6, 0.2, 0.2, 1, 0.2)
+  GameTooltip:AddDoubleLine(L["HEARTHSTONE"].." : "..GetBindLocation(), GetHearthCooldown(), 0.9, 0.6, 0.2, 0.2, 1, 0.2)
 	GameTooltip:AddLine(" ")
 	GameTooltip:AddDoubleLine(L["TP_P"], getReagentCount(L["TP_RUNE"]).."/"..getReagentCount(L["P_RUNE"]), 0.9, 0.6, 0.2, 0.2, 1, 0.2)
 
