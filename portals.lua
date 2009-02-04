@@ -5,9 +5,18 @@ local icon = LibStub("LibDBIcon-1.0")
 
 local defaultIcon = "Interface\\Icons\\INV_Misc_Rune_06"
 local hearthstoneIcon	= "Interface\\Icons\\INV_Misc_Rune_01"
+local scrollOfRecallIcon = "Interface\\Icons\\INV_Scroll_16"
 
 local string_find = string.find
 local math_floor = math.floor
+
+local GetSpellInfo = GetSpellInfo
+local GetSpellName = GetSpellName
+local GetContainerNumSlots = GetContainerNumSlots
+local GetContainerItemInfo = GetContainerItemInfo
+local GetContainerItemLink = GetContainerItemLink
+local GetContainerItemCooldown = GetContainerItemCooldown
+local GetBindLocation = GetBindLocation
 
 local L = L
 
@@ -188,7 +197,7 @@ local function GetHearthCooldown()
 end
 
 local function ShowHearthstone()
-	local text, secure
+	local text, secure, icon
 	
 	local hsCd = GetHearthCooldown()
 	if hsCd == L["READY"] then
@@ -199,6 +208,7 @@ local function ShowHearthstone()
 				type = 'item',
 				item = L["HEARTHSTONE"],
 			}
+			icon = hearthstoneIcon
 		end
 	else
 		if hasItem(L["SCROLL_3"]) then
@@ -207,6 +217,7 @@ local function ShowHearthstone()
 				type = 'item',
 				item = L["SCROLL_3"],
 			}
+			icon = scrollOfRecallIcon
 		end
 	end
 	
@@ -214,8 +225,8 @@ local function ShowHearthstone()
 		dewdrop:AddLine(
 			'text', text,
 			'secure', secure,
-			'icon', hearthstoneIcon,
-			'func', function() UpdateIcon(hearthstoneIcon) end,
+			'icon', icon,
+			'func', function() UpdateIcon(icon) end,
 			'closeWhenClicked', true
 		)
 		dewdrop:AddLine()
