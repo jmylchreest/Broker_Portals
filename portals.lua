@@ -22,7 +22,7 @@ local L = L
 
 obj = LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObject("Broker_Portals", {
 	type = "data source",
-	text = "Broker_Portals",
+	text = "Portals",
 	icon = defaultIcon,
 })
 local obj = obj
