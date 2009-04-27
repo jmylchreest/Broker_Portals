@@ -203,7 +203,7 @@ local function ShowHearthstone()
 	if hsCd == L["READY"] then
 		local bindLoc = GetBindLocation()
 		if bindLoc then
-			text = L["INN"]..bindLoc
+			text = L["INN"].." "..bindLoc
 			secure = {
 				type = 'item',
 				item = L["HEARTHSTONE"],
@@ -344,7 +344,7 @@ function obj.OnEnter(self)
 	GameTooltip:AddLine("Broker Portals")
 	GameTooltip:AddDoubleLine(L["RCLICK"], L["SEE_SPELLS"], 0.9, 0.6, 0.2, 0.2, 1, 0.2)
   GameTooltip:AddLine(" ")
-  GameTooltip:AddDoubleLine(L["HEARTHSTONE"].." : "..GetBindLocation(), GetHearthCooldown(), 0.9, 0.6, 0.2, 0.2, 1, 0.2)
+  GameTooltip:AddDoubleLine(L["HEARTHSTONE"]..": "..GetBindLocation(), GetHearthCooldown(), 0.9, 0.6, 0.2, 0.2, 1, 0.2)
 	GameTooltip:AddLine(" ")
 	GameTooltip:AddDoubleLine(L["TP_P"], getReagentCount(L["TP_RUNE"]).."/"..getReagentCount(L["P_RUNE"]), 0.9, 0.6, 0.2, 0.2, 1, 0.2)
 
