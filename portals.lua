@@ -327,6 +327,7 @@ local function GetTipAnchor(frame)
 end
 
 function obj.OnClick(self, button)
+  GameTooltip:Hide() 
 	if button == "RightButton" then
 		dewdrop:Open(self, "children", function() UpdateMenu() end)
 	end
