@@ -1,2 +1,5 @@
+1.7.9:
+  - update: TOC for patch 3.2
+
 1.7.8:
   - bugfix: tooltip overlapping portal menu
