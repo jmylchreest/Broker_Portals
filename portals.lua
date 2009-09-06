@@ -3,27 +3,37 @@ if not LibStub then return end
 local dewdrop = LibStub("Dewdrop-2.0", true)
 local icon = LibStub("LibDBIcon-1.0")
 
-local defaultIcon = "Interface\\Icons\\INV_Misc_Rune_06"
-local hearthstoneIcon	= "Interface\\Icons\\INV_Misc_Rune_01"
-local scrollOfRecallIcon = "Interface\\Icons\\INV_Scroll_16"
-
-local string_find = string.find
 local math_floor = math.floor
 
-local GetSpellInfo = GetSpellInfo
-local GetSpellName = GetSpellName
-local GetContainerNumSlots = GetContainerNumSlots
+local GetContainerItemCooldown = GetContainerItemCooldown
 local GetContainerItemInfo = GetContainerItemInfo
 local GetContainerItemLink = GetContainerItemLink
-local GetContainerItemCooldown = GetContainerItemCooldown
+local GetContainerNumSlots = GetContainerNumSlots
 local GetBindLocation = GetBindLocation
+local GetInventoryItemCooldown = GetInventoryItemCooldown
+local GetInventoryItemLink = GetInventoryItemLink
+local GetSpellInfo = GetSpellInfo
+local GetSpellName = GetSpellName
 
 local L = L
+
+-- IDs of items usable for transportation
+local items = {
+  48957, -- Etched Signet of the Kirin Tor
+}
+
+-- IDs of items usable instead of hearthstone
+local scrolls = {
+  6948,  -- Hearthstone
+  44315, -- Scroll of Recall III
+  44314, -- Scroll of Recall II
+  37118, -- Scroll of Recall
+}
 
 obj = LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObject("Broker_Portals", {
 	type = "data source",
 	text = "Portals",
-	icon = defaultIcon,
+	icon = "Interface\\Icons\\INV_Misc_Rune_06",
 })
 local obj = obj
 local methods	= {}
@@ -61,27 +71,49 @@ local function findSpell(spellName)
 		if not s then
 			break
 		end
-		
+
 		if s == spellName then
 			return i
 		end
-		
+
 		i = i + 1
 	end
 end
 
-local function hasItem(itemName)
-	for bag = 0, 4 do
-    for slot = 1, GetContainerNumSlots(bag) do
-      local item = GetContainerItemLink(bag, slot)
-      if item then
-        if string_find(item, itemName) then
+-- returns true, if player has item with given ID in inventory or bags and it's not on cooldown
+local function hasItem(itemID)
+  local item, found, id
+  -- scan inventory
+  for slotId = 1, 19 do
+    item = GetInventoryItemLink("player", slotId)
+    if item then
+      found, _, id = item:find("^|c%x+|Hitem:(%d+):.+")
+      if found and tonumber(id) == itemID then
+        if GetInventoryItemCooldown("player", slot) ~= 0 then
+          return false
+        else
           return true
         end
       end
     end
   end
-	
+  -- scan bags
+	for bag = 0, 4 do
+    for slot = 1, GetContainerNumSlots(bag) do
+      item = GetContainerItemLink(bag, slot)
+      if item then
+        found, _, id = item:find("^|c%x+|Hitem:(%d+):.+")
+        if found and tonumber(id) == itemID then
+          if GetContainerItemCooldown(bag, slot) ~= 0 then
+            return false
+          else
+            return true
+          end
+        end
+      end
+    end
+  end
+
 	return false
 end
 
@@ -178,15 +210,14 @@ local function GetHearthCooldown()
     for slot = 1, GetContainerNumSlots(bag) do
       local item = GetContainerItemLink(bag, slot)
       if item then
-        if string_find(item, L["HEARTHSTONE"]) then
+        if item:find("^|c%x+|Hitem:6948:.+") then
           startTime, duration = GetContainerItemCooldown(bag, slot)
           cooldown = duration - (GetTime() - startTime)
           cooldown = cooldown / 60
-          cooldown = math_floor(cooldown)
           if cooldown <= 0 then
             return L["READY"]
           end
-
+          cooldown = math_floor(cooldown)
           return cooldown.." "..L["MIN"]
         end
       end
@@ -197,30 +228,21 @@ local function GetHearthCooldown()
 end
 
 local function ShowHearthstone()
-	local text, secure, icon
-	
-	local hsCd = GetHearthCooldown()
-	if hsCd == L["READY"] then
-		local bindLoc = GetBindLocation()
-		if bindLoc then
-			text = L["INN"].." "..bindLoc
-			secure = {
-				type = 'item',
-				item = L["HEARTHSTONE"],
-			}
-			icon = hearthstoneIcon
-		end
-	else
-		if hasItem(L["SCROLL_3"]) then
-			text = L["SCROLL_3"]
-			secure = {
-				type = 'item',
-				item = L["SCROLL_3"],
-			}
-			icon = scrollOfRecallIcon
-		end
-	end
-	
+	local text, secure, icon, name
+  local bindLoc = GetBindLocation()
+
+  for _, itemID in ipairs(scrolls) do
+    if hasItem(itemID) then
+      name, _, _, _, _, _, _, _, _, icon = GetItemInfo(itemID)
+      text = L["INN"].." "..bindLoc
+      secure = {
+        type = 'item',
+        item = name,
+      }
+      break
+    end
+  end
+
 	if secure ~= nil then
 		dewdrop:AddLine(
 			'text', text,
@@ -231,6 +253,33 @@ local function ShowHearthstone()
 		)
 		dewdrop:AddLine()
 	end
+end
+
+local function ShowOtherItems()
+  local secure, icon, name
+  local i = 0
+
+  for _, itemID in ipairs(items) do
+    if hasItem(itemID) then
+      name, _, _, _, _, _, _, _, _, icon = GetItemInfo(itemID)
+      secure = {
+        type = 'item',
+        item = name,
+      }
+
+      dewdrop:AddLine(
+        'text', name,
+        'secure', secure,
+        'icon', icon,
+        'func', function() UpdateIcon(icon) end,
+        'closeWhenClicked', true
+      )
+      i = i + 1
+    end
+  end
+  if i > 0 then
+    dewdrop:AddLine()
+  end
 end
 
 local function ToggleMinimap()
@@ -265,6 +314,7 @@ local function UpdateMenu()
 	dewdrop:AddLine()
 	
 	ShowHearthstone()
+  ShowOtherItems()
 	
 	dewdrop:AddLine(
 		'text', L["ATT_MINIMAP"],
@@ -306,7 +356,7 @@ local function getReagentCount(name)
     for slot = 1, GetContainerNumSlots(bag) do
       local item = GetContainerItemLink(bag, slot)
       if item then
-        if string_find(item, name) then
+        if item:find(name) then
           local _, itemCount = GetContainerItemInfo(bag, slot)
           count = count + itemCount
         end
