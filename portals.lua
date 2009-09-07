@@ -346,10 +346,8 @@ local function UpdateMenu(level, value)
       ShowOtherItems()
     end
 
-    ShowOptions()
-    
     dewdrop:AddLine(
-      'text', 'Options',
+      'text', L['OPTIONS'],
       'hasArrow', true,
       'value', 'options'
     )
@@ -362,8 +360,8 @@ local function UpdateMenu(level, value)
     )
   elseif level == 2 and value == 'options' then
     dewdrop:AddLine(
-      'text', 'Show Items',
-      'checked', not PortalsDB.showItems,
+      'text', L['SHOW_ITEMS'],
+      'checked', PortalsDB.showItems,
       'func', function() PortalsDB.showItems = not PortalsDB.showItems end,
       'closeWhenClicked', true
     )
@@ -378,7 +376,7 @@ end
 
 function frame:PLAYER_LOGIN()
 	-- PortalsDB.minimap is there for smooth upgrade of SVs from old version
-	if (not PortalsDB) or (PortalsDB.version ~= 1) then
+	if (not PortalsDB) or (PortalsDB.version == nil) then
 		PortalsDB = {}
 		PortalsDB.minimap = {}
 		PortalsDB.minimap.hide = false
@@ -387,7 +385,7 @@ function frame:PLAYER_LOGIN()
 	end
 
   -- upgrade from version without showItems support
-  if PortalsDB.version ~= 2 then
+  if PortalsDB.version < 2 then
     PortalsDB.showItems = true
     PortalsDB.version = 2
   end
@@ -422,10 +420,10 @@ end
 
 -- All credit for this func goes to Tekkub and his picoGuild!
 local function GetTipAnchor(frame)
-		local x,y = frame:GetCenter()
+		local x, y = frame:GetCenter()
 		if not x or not y then return 'TOPLEFT', 'BOTTOMLEFT' end
-		local hhalf = (x > UIParent:GetWidth()*2/3) and 'RIGHT' or (x < UIParent:GetWidth()/3) and 'LEFT' or ''
-		local vhalf = (y > UIParent:GetHeight()/2) and 'TOP' or 'BOTTOM'
+		local hhalf = (x > UIParent:GetWidth() * 2 / 3) and 'RIGHT' or (x < UIParent:GetWidth() / 3) and 'LEFT' or ''
+		local vhalf = (y > UIParent:GetHeight() / 2) and 'TOP' or 'BOTTOM'
 		return vhalf..hhalf, frame, (vhalf == 'TOP' and 'BOTTOM' or 'TOP')..hhalf
 end
 
