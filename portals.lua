@@ -1,7 +1,7 @@
 if not LibStub then return end
 
-local dewdrop = LibStub("Dewdrop-2.0", true)
-local icon = LibStub("LibDBIcon-1.0")
+local dewdrop = LibStub('Dewdrop-2.0', true)
+local icon = LibStub('LibDBIcon-1.0')
 
 local math_floor = math.floor
 
@@ -56,19 +56,19 @@ local scrolls = {
   37118 -- Scroll of Recall
 }
 
-obj = LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObject("Broker_Portals", {
-	type = "data source",
-	text = "Portals",
-	icon = "Interface\\Icons\\INV_Misc_Rune_06",
+obj = LibStub:GetLibrary('LibDataBroker-1.1'):NewDataObject('Broker_Portals', {
+	type = 'data source',
+	text = 'Portals',
+	icon = 'Interface\\Icons\\INV_Misc_Rune_06',
 })
 local obj = obj
 local methods	= {}
 local portals	= nil
-local frame = CreateFrame("frame")
+local frame = CreateFrame('frame')
 
-frame:SetScript("OnEvent", function(self, event, ...) if self[event] then return self[event](self, event, ...) end end)
-frame:RegisterEvent("PLAYER_LOGIN")
-frame:RegisterEvent("SKILL_LINES_CHANGED")
+frame:SetScript('OnEvent', function(self, event, ...) if self[event] then return self[event](self, event, ...) end end)
+frame:RegisterEvent('PLAYER_LOGIN')
+frame:RegisterEvent('SKILL_LINES_CHANGED')
 
 
 local function pairsByKeys(t)
@@ -111,11 +111,11 @@ local function hasItem(itemID)
   local item, found, id
   -- scan inventory
   for slotId = 1, 19 do
-    item = GetInventoryItemLink("player", slotId)
+    item = GetInventoryItemLink('player', slotId)
     if item then
-      found, _, id = item:find("^|c%x+|Hitem:(%d+):.+")
+      found, _, id = item:find('^|c%x+|Hitem:(%d+):.+')
       if found and tonumber(id) == itemID then
-        if GetInventoryItemCooldown("player", slotId) ~= 0 then
+        if GetInventoryItemCooldown('player', slotId) ~= 0 then
           return false
         else
           return true
@@ -128,7 +128,7 @@ local function hasItem(itemID)
     for slot = 1, GetContainerNumSlots(bag) do
       item = GetContainerItemLink(bag, slot)
       if item then
-        found, _, id = item:find("^|c%x+|Hitem:(%d+):.+")
+        found, _, id = item:find('^|c%x+|Hitem:(%d+):.+')
         if found and tonumber(id) == itemID then
           if GetContainerItemCooldown(bag, slot) ~= 0 then
             return false
@@ -179,18 +179,18 @@ local function SetupSpells()
 		}
 	}
 	
-	local _, class = UnitClass("player")
-	if class == "MAGE" then
-		portals = spells[UnitFactionGroup("player")]
-	elseif class == "DEATHKNIGHT" then
+	local _, class = UnitClass('player')
+	if class == 'MAGE' then
+		portals = spells[UnitFactionGroup('player')]
+	elseif class == 'DEATHKNIGHT' then
 		portals = {
 			50977 --Death Gate
 			}
-	elseif class == "DRUID" then
+	elseif class == 'DRUID' then
 		portals = {
 			18960 --TP:Moonglade
 			}
-	elseif class == "SHAMAN" then
+	elseif class == 'SHAMAN' then
 		portals = {
 			556 --Astral Recall
 			}
@@ -236,21 +236,21 @@ local function GetHearthCooldown()
     for slot = 1, GetContainerNumSlots(bag) do
       local item = GetContainerItemLink(bag, slot)
       if item then
-        if item:find("^|c%x+|Hitem:6948:.+") then
+        if item:find('^|c%x+|Hitem:6948:.+') then
           startTime, duration = GetContainerItemCooldown(bag, slot)
           cooldown = duration - (GetTime() - startTime)
           cooldown = cooldown / 60
           if cooldown <= 0 then
-            return L["READY"]
+            return L['READY']
           end
           cooldown = math_floor(cooldown)
-          return cooldown.." "..L["MIN"]
+          return cooldown..' '..L['MIN']
         end
       end
     end
   end
   
-  return L["N/A"]
+  return L['N/A']
 end
 
 local function ShowHearthstone()
@@ -260,7 +260,7 @@ local function ShowHearthstone()
   for _, itemID in ipairs(scrolls) do
     if hasItem(itemID) then
       name, _, _, _, _, _, _, _, _, icon = GetItemInfo(itemID)
-      text = L["INN"].." "..bindLoc
+      text = L['INN']..' '..bindLoc
       secure = {
         type = 'item',
         item = name,
@@ -312,49 +312,68 @@ local function ToggleMinimap()
 	local hide = not PortalsDB.minimap.hide
 	PortalsDB.minimap.hide = hide
 	if hide then
-		icon:Hide("Broker_Portals")
+		icon:Hide('Broker_Portals')
 	else
-		icon:Show("Broker_Portals")
+		icon:Show('Broker_Portals')
 	end
 end
 
-local function UpdateMenu()
-	dewdrop:AddLine(
-		'text', 	"Broker_Portals",
-		'isTitle', 	true
-	)
-	dewdrop:AddLine()
+local function UpdateMenu(level, value)
+  if level == 1 then
+    dewdrop:AddLine(
+      'text', 	'Broker_Portals',
+      'isTitle', 	true
+    )
+    dewdrop:AddLine()
 
-	for k,v in pairsByKeys(methods) do
-		if v.secure then
-			dewdrop:AddLine(
-				'text', v.text,
-				'secure',	v.secure,
-				'icon', v.spellIcon,
-				'func', function() UpdateIcon(v.spellIcon) end,
-				'closeWhenClicked', true
-			)
-		end
-	end
-	
-	dewdrop:AddLine()
-	
-	ShowHearthstone()
-  ShowOtherItems()
-	
-	dewdrop:AddLine(
-		'text', L["ATT_MINIMAP"],
-		'checked', not PortalsDB.minimap.hide,
-		'func', function() ToggleMinimap() end,
-		'closeWhenClicked', true
-	)
-	
-	dewdrop:AddLine(
-		'text', CLOSE,
-		'tooltipTitle', CLOSE,
-		'tooltipText', CLOSE_DESC,
-		'closeWhenClicked', true
-	)
+    for k,v in pairsByKeys(methods) do
+      if v.secure then
+        dewdrop:AddLine(
+          'text', v.text,
+          'secure',	v.secure,
+          'icon', v.spellIcon,
+          'func', function() UpdateIcon(v.spellIcon) end,
+          'closeWhenClicked', true
+        )
+      end
+    end
+    
+    dewdrop:AddLine()
+    
+    ShowHearthstone()
+
+    if PortalsDB.showItems then
+      ShowOtherItems()
+    end
+
+    ShowOptions()
+    
+    dewdrop:AddLine(
+      'text', 'Options',
+      'hasArrow', true,
+      'value', 'options'
+    )
+    
+    dewdrop:AddLine(
+      'text', CLOSE,
+      'tooltipTitle', CLOSE,
+      'tooltipText', CLOSE_DESC,
+      'closeWhenClicked', true
+    )
+  elseif level == 2 and value == 'options' then
+    dewdrop:AddLine(
+      'text', 'Show Items',
+      'checked', not PortalsDB.showItems,
+      'func', function() PortalsDB.showItems = not PortalsDB.showItems end,
+      'closeWhenClicked', true
+    )
+    dewdrop:AddLine(
+      'text', L['ATT_MINIMAP'],
+      'checked', not PortalsDB.minimap.hide,
+      'func', function() ToggleMinimap() end,
+      'closeWhenClicked', true
+    )
+  end
 end
 
 function frame:PLAYER_LOGIN()
@@ -363,13 +382,21 @@ function frame:PLAYER_LOGIN()
 		PortalsDB = {}
 		PortalsDB.minimap = {}
 		PortalsDB.minimap.hide = false
-		PortalsDB.version = 1
-	end
-	if icon then
-		icon:Register("Broker_Portals", obj, PortalsDB.minimap)
+    PortalsDB.showItems = true
+		PortalsDB.version = 2
 	end
 
-	self:UnregisterEvent("PLAYER_LOGIN")
+  -- upgrade from version without showItems support
+  if PortalsDB.version ~= 2 then
+    PortalsDB.showItems = true
+    PortalsDB.version = 2
+  end
+
+	if icon then
+		icon:Register('Broker_Portals', obj, PortalsDB.minimap)
+	end
+
+	self:UnregisterEvent('PLAYER_LOGIN')
 end
 
 function frame:SKILL_LINES_CHANGED()
@@ -396,16 +423,16 @@ end
 -- All credit for this func goes to Tekkub and his picoGuild!
 local function GetTipAnchor(frame)
 		local x,y = frame:GetCenter()
-		if not x or not y then return "TOPLEFT", "BOTTOMLEFT" end
-		local hhalf = (x > UIParent:GetWidth()*2/3) and "RIGHT" or (x < UIParent:GetWidth()/3) and "LEFT" or ""
-		local vhalf = (y > UIParent:GetHeight()/2) and "TOP" or "BOTTOM"
-		return vhalf..hhalf, frame, (vhalf == "TOP" and "BOTTOM" or "TOP")..hhalf
+		if not x or not y then return 'TOPLEFT', 'BOTTOMLEFT' end
+		local hhalf = (x > UIParent:GetWidth()*2/3) and 'RIGHT' or (x < UIParent:GetWidth()/3) and 'LEFT' or ''
+		local vhalf = (y > UIParent:GetHeight()/2) and 'TOP' or 'BOTTOM'
+		return vhalf..hhalf, frame, (vhalf == 'TOP' and 'BOTTOM' or 'TOP')..hhalf
 end
 
 function obj.OnClick(self, button)
   GameTooltip:Hide() 
-	if button == "RightButton" then
-		dewdrop:Open(self, "children", function() UpdateMenu() end)
+	if button == 'RightButton' then
+		dewdrop:Open(self, 'children', function(level, value) UpdateMenu(level, value) end)
 	end
 end
 
@@ -414,20 +441,20 @@ function obj.OnLeave()
 end
 
 function obj.OnEnter(self)
- 	GameTooltip:SetOwner(self, "ANCHOR_NONE")
+ 	GameTooltip:SetOwner(self, 'ANCHOR_NONE')
 	GameTooltip:SetPoint(GetTipAnchor(self))
 	GameTooltip:ClearLines()
 
-	GameTooltip:AddLine("Broker Portals")
-	GameTooltip:AddDoubleLine(L["RCLICK"], L["SEE_SPELLS"], 0.9, 0.6, 0.2, 0.2, 1, 0.2)
-  GameTooltip:AddLine(" ")
-  GameTooltip:AddDoubleLine(L["HEARTHSTONE"]..": "..GetBindLocation(), GetHearthCooldown(), 0.9, 0.6, 0.2, 0.2, 1, 0.2)
-	GameTooltip:AddLine(" ")
-	GameTooltip:AddDoubleLine(L["TP_P"], getReagentCount(L["TP_RUNE"]).."/"..getReagentCount(L["P_RUNE"]), 0.9, 0.6, 0.2, 0.2, 1, 0.2)
+	GameTooltip:AddLine('Broker Portals')
+	GameTooltip:AddDoubleLine(L['RCLICK'], L['SEE_SPELLS'], 0.9, 0.6, 0.2, 0.2, 1, 0.2)
+  GameTooltip:AddLine(' ')
+  GameTooltip:AddDoubleLine(L['HEARTHSTONE']..': '..GetBindLocation(), GetHearthCooldown(), 0.9, 0.6, 0.2, 0.2, 1, 0.2)
+	GameTooltip:AddLine(' ')
+	GameTooltip:AddDoubleLine(L['TP_P'], getReagentCount(L['TP_RUNE'])..'/'..getReagentCount(L['P_RUNE']), 0.9, 0.6, 0.2, 0.2, 1, 0.2)
 
 	GameTooltip:Show()
 end
 
 -- slashcommand definition
-SlashCmdList["BROKER_PORTALS"] = function() ToggleMinimap() end
-SLASH_BROKER_PORTALS1 =  "/portals"
+SlashCmdList['BROKER_PORTALS'] = function() ToggleMinimap() end
+SLASH_BROKER_PORTALS1 =  '/portals'
