@@ -1,3 +1,7 @@
+1.8:
+  - feature: teleportation items are now supported
+  - feature: all scrolls of recall are supported, the better, the higher priority
+
 1.7.9:
   - update: TOC for patch 3.2
 

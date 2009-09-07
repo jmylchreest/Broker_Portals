@@ -19,15 +19,41 @@ local L = L
 
 -- IDs of items usable for transportation
 local items = {
+  -- Dalaran rings
+  40586, -- Band of the Kirin Tor
+  48954, -- Etched Band of the Kirin Tor
+  48955, -- Etched Loop of the Kirin Tor
+  48956, -- Etched Ring of the Kirin Tor
   48957, -- Etched Signet of the Kirin Tor
+  45688, -- Inscribed Band of the Kirin Tor
+  45689, -- Inscribed Loop of the Kirin Tor
+  45690, -- Inscribed Ring of the Kirin Tor
+  45691, -- Inscribed Signet of the Kirin Tor
+  44934, -- Loop of the Kirin Tor
+  44935, -- Ring of the Kirin Tor
+  40585, -- Signet of the Kirin Tor
+  -- Engineering Gadgets
+  30542, -- Dimensional Ripper - Area 52
+  18984, -- Dimensional Ripper - Everlook
+  18986, -- Ultrasafe Transporter: Gadgetzan
+  30544, -- Ultrasafe Transporter: Toshley's Station
+  48933, -- Wormhole Generator: Northrend
+  -- Seasonal items
+  37863, -- Direbrew's Remote
+  21711, -- Lunar Festival Invitation
+  -- Miscellaneous
+  46874, -- Argent Crusader's Tabard
+  32757, -- Blessed Medallion of Karabor
+  35230  -- Darnarian's Scroll of Teleportation
 }
 
 -- IDs of items usable instead of hearthstone
 local scrolls = {
   6948,  -- Hearthstone
+  28585,  -- Ruby Slippers
   44315, -- Scroll of Recall III
   44314, -- Scroll of Recall II
-  37118, -- Scroll of Recall
+  37118 -- Scroll of Recall
 }
 
 obj = LibStub:GetLibrary("LibDataBroker-1.1"):NewDataObject("Broker_Portals", {
@@ -89,7 +115,7 @@ local function hasItem(itemID)
     if item then
       found, _, id = item:find("^|c%x+|Hitem:(%d+):.+")
       if found and tonumber(id) == itemID then
-        if GetInventoryItemCooldown("player", slot) ~= 0 then
+        if GetInventoryItemCooldown("player", slotId) ~= 0 then
           return false
         else
           return true
@@ -133,7 +159,7 @@ local function SetupSpells()
 			32266, --P:Exodar
 			49360, --P:Theramore
 			33691, --P:Shattrath
-			53142, --P:Dalaran
+			53142  --P:Dalaran
 		},
 		Horde = {
 			3563,  --TP:Undercity
@@ -149,7 +175,7 @@ local function SetupSpells()
 			32267, --P:Silvermoon
 			49361, --P:Stonard
 			35717, --P:Shattrath
-			53142, --P:Dalaran
+			53142  --P:Dalaran
 		}
 	}
 	
