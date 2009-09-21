@@ -12,6 +12,9 @@
 libs\LibStub\LibStub.lua
 libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
 libs\LibDataBroker-1.1.lua
+libs\AceLibrary\AceLibrary.lua
+libs\Dewdrop-2.0\Dewdrop-2.0.lua
+libs\LibDBIcon-1.0\LibDBIcon-1.0.lua
 
 locale-enUS.lua
 locale-deDE.lua
