@@ -1,3 +1,6 @@
+1.8.1:
+  - update: korean (koKR) locale
+
 1.8:
   - feature: teleportation items are now supported
   - feature: all scrolls of recall are supported, the better, the higher priority
