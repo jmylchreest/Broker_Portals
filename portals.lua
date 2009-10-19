@@ -5,7 +5,6 @@ local icon = LibStub('LibDBIcon-1.0')
 
 local math_floor = math.floor
 
-local CreateFrame = CreateFrame
 local GetContainerItemCooldown = GetContainerItemCooldown
 local GetContainerItemInfo = GetContainerItemInfo
 local GetContainerItemLink = GetContainerItemLink
@@ -65,11 +64,11 @@ obj = LibStub:GetLibrary('LibDataBroker-1.1'):NewDataObject('Broker_Portals', {
 local obj = obj
 local methods	= {}
 local portals	= nil
-local btn = CreateFrame('Button', 'brokerPortalsBtn', UIParent, 'SecureActionButtonTemplate')
+local frame = CreateFrame('frame')
 
-btn:SetScript('OnEvent', function(self, event, ...) if self[event] then return self[event](self, event, ...) end end)
-btn:RegisterEvent('PLAYER_LOGIN')
-btn:RegisterEvent('SKILL_LINES_CHANGED')
+frame:SetScript('OnEvent', function(self, event, ...) if self[event] then return self[event](self, event, ...) end end)
+frame:RegisterEvent('PLAYER_LOGIN')
+frame:RegisterEvent('SKILL_LINES_CHANGED')
 
 
 local function pairsByKeys(t)
@@ -230,13 +229,6 @@ local function UpdateIcon(icon)
 	obj.icon = icon
 end
 
-local function setButton(btnType, name)
-  PortalsDB.lastUsed = btnType
-  PortalsDB.lastUsedName = name
-  btn:SetAttribute('type', btnType)
-  btn:SetAttribute(btnType, name)
-end
-
 local function GetHearthCooldown()
 	local cooldown, startTime, duration
 
@@ -305,10 +297,7 @@ local function ShowOtherItems()
         'text', name,
         'secure', secure,
         'icon', icon,
-        'func', function()
-          UpdateIcon(icon)
-          SetButton('item', v.text)
-        end,
+        'func', function() UpdateIcon(icon) end,
         'closeWhenClicked', true
       )
       i = i + 1
@@ -343,10 +332,7 @@ local function UpdateMenu(level, value)
           'text', v.text,
           'secure',	v.secure,
           'icon', v.spellIcon,
-          'func', function()
-            UpdateIcon(v.spellIcon)
-            SetButton('spell', v.text)
-          end,
+          'func', function() UpdateIcon(v.spellIcon) end,
           'closeWhenClicked', true
         )
       end
@@ -388,31 +374,30 @@ local function UpdateMenu(level, value)
   end
 end
 
-function btn:PLAYER_LOGIN()
+function frame:PLAYER_LOGIN()
 	-- PortalsDB.minimap is there for smooth upgrade of SVs from old version
-	if not PortalsDB then
+	if (not PortalsDB) or (PortalsDB.version == nil) then
 		PortalsDB = {}
 		PortalsDB.minimap = {}
 		PortalsDB.minimap.hide = false
     PortalsDB.showItems = true
-		PortalsDB.version = 1
-    PortalsDB.lastUsed = nil
-    PortalsDB.lastUsedName = nil
+		PortalsDB.version = 2
 	end
+
+  -- upgrade from version without showItems support
+  if PortalsDB.version < 2 then
+    PortalsDB.showItems = true
+    PortalsDB.version = 2
+  end
 
 	if icon then
 		icon:Register('Broker_Portals', obj, PortalsDB.minimap)
 	end
 
-  if PortalsDB.lastUsed ~= nil then
-    btn:SetAttribute('type', PortalsDB.lastUsed)
-    btn:SetAttribute('spell', PortalsDB.lastUsedName)
-  end
-
 	self:UnregisterEvent('PLAYER_LOGIN')
 end
 
-function btn:SKILL_LINES_CHANGED()
+function frame:SKILL_LINES_CHANGED()
 	UpdateSpells()
 end
 
@@ -446,9 +431,7 @@ function obj.OnClick(self, button)
   GameTooltip:Hide() 
 	if button == 'RightButton' then
 		dewdrop:Open(self, 'children', function(level, value) UpdateMenu(level, value) end)
-	else
-    btn:Click()
-  end
+	end
 end
 
 function obj.OnLeave() 
