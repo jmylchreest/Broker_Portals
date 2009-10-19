@@ -7,7 +7,7 @@
 ## Version: @project-version@
 ## OptionalDeps: LibDBIcon-1.0
 
-## SavedVariables: PortalsDB
+## SavedVariablesPerCharacter: PortalsDB
 
 libs\LibStub\LibStub.lua
 libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
