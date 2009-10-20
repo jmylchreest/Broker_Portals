@@ -5,6 +5,7 @@ local icon = LibStub('LibDBIcon-1.0')
 
 local math_floor = math.floor
 
+local CreateFrame = CreateFrame
 local GetContainerItemCooldown = GetContainerItemCooldown
 local GetContainerItemInfo = GetContainerItemInfo
 local GetContainerItemLink = GetContainerItemLink
@@ -12,6 +13,7 @@ local GetContainerNumSlots = GetContainerNumSlots
 local GetBindLocation = GetBindLocation
 local GetInventoryItemCooldown = GetInventoryItemCooldown
 local GetInventoryItemLink = GetInventoryItemLink
+local GetSpellCooldown = GetSpellCooldown
 local GetSpellInfo = GetSpellInfo
 local GetSpellName = GetSpellName
 
@@ -327,7 +329,7 @@ local function UpdateMenu(level, value)
     dewdrop:AddLine()
 
     for k,v in pairsByKeys(methods) do
-      if v.secure then
+      if v.secure and GetSpellCooldown(v.text) == 0 then
         dewdrop:AddLine(
           'text', v.text,
           'secure',	v.secure,
