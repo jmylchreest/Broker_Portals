@@ -22,5 +22,6 @@ locale-ruRU.lua
 locale-esES.lua
 locale-frFR.lua
 locale-zhTW.lua
+locale-koKR.lua
 
 portals.lua

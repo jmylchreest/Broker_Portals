@@ -1,3 +1,6 @@
+1.8.2:
+  - bugfix: didn't include koKR locale in files
+
 1.8.1:
   - update: korean (koKR) locale
 
