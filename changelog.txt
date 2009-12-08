@@ -1,3 +1,7 @@
+1.8.3:
+  - update: updated for patch 3.3
+  - update: added Boots of the Bay
+
 1.8.2:
   - bugfix: didn't include koKR locale in files
 

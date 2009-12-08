@@ -46,16 +46,17 @@ local items = {
   -- Miscellaneous
   46874, -- Argent Crusader's Tabard
   32757, -- Blessed Medallion of Karabor
-  35230  -- Darnarian's Scroll of Teleportation
+  35230, -- Darnarian's Scroll of Teleportation
+  50287  -- Boots of the Bay
 }
 
 -- IDs of items usable instead of hearthstone
 local scrolls = {
   6948,  -- Hearthstone
-  28585,  -- Ruby Slippers
+  28585, -- Ruby Slippers
   44315, -- Scroll of Recall III
   44314, -- Scroll of Recall II
-  37118 -- Scroll of Recall
+  37118  -- Scroll of Recall
 }
 
 obj = LibStub:GetLibrary('LibDataBroker-1.1'):NewDataObject('Broker_Portals', {
