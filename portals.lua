@@ -34,6 +34,10 @@ local items = {
   44934, -- Loop of the Kirin Tor
   44935, -- Ring of the Kirin Tor
   40585, -- Signet of the Kirin Tor
+  51560, -- Runed Band of the Kirin Tor
+  51558, -- Runed Loop of the Kirin Tor
+  51559, -- Runed Ring of the Kirin Tor
+  51557, -- Runed Signet of the Kirin Tor
   -- Engineering Gadgets
   30542, -- Dimensional Ripper - Area 52
   18984, -- Dimensional Ripper - Everlook
