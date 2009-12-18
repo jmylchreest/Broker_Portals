@@ -1,6 +1,6 @@
-if GetLocale() == "ruRU" then
+if GetLocale() == "zhTW" then
 
---@localization(locale="ruRU", format="lua_additive_table", handle-unlocalized="comment")@
+--@localization(locale="zhTW", format="lua_additive_table", handle-unlocalized="comment")@
 
 end
 
