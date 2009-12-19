@@ -239,25 +239,43 @@ end
 local function GetHearthCooldown()
 	local cooldown, startTime, duration
 
-  for bag = 0, 4 do
-    for slot = 1, GetContainerNumSlots(bag) do
-      local item = GetContainerItemLink(bag, slot)
-      if item then
-        if item:find('^|c%x+|Hitem:6948:.+') then
-          startTime, duration = GetContainerItemCooldown(bag, slot)
-          cooldown = duration - (GetTime() - startTime)
-          cooldown = cooldown / 60
-          if cooldown <= 0 then
-            return L['READY']
-          end
-          cooldown = math_floor(cooldown)
-          return cooldown..' '..L['MIN']
-        end
-      end
+  if GetItemCount(6948) > 0 then                                 
+    startTime, duration = GetItemCooldown(6948)                
+    cooldown = duration - (GetTime() - startTime)              
+    if cooldown >= 60 then                                     
+      cooldown = math_floor( cooldown / 60 )                 
+      cooldown = cooldown..' '..L['MIN']                     
+    elseif cooldown <= 0 then                                  
+      cooldown = L['READY']                                  
+    else                                                       
+      cooldown = cooldown..' '..L['SEC']                     
     end
   end
-  
+
   return L['N/A']
+end
+
+local function GetItemCooldowns( )
+  local cooldown, startTime, duration, cooldowns = nil, nil, nil, {}
+
+  for _, item in pairs(items) do
+    if GetItemCount( item ) > 0 then
+      startTime, duration = GetItemCooldown(item)
+      cooldown = duration - (GetTime() - startTime)
+      if cooldown >= 60 then
+        cooldown = math_floor(cooldown / 60)
+        cooldown = cooldown..' '..L['MIN']
+      elseif cooldown <= 0 then
+        cooldown = L['READY']
+      else
+        cooldown = cooldown..' '..L['SEC']
+      end
+      local name = GetItemInfo(item)
+      cooldowns[name] = cooldown
+    end
+  end
+
+  return cooldowns
 end
 
 local function ShowHearthstone()
@@ -373,6 +391,12 @@ local function UpdateMenu(level, value)
       'closeWhenClicked', true
     )
     dewdrop:AddLine(
+      'text', L['SHOW_ITEM_COOLDOWNS'],
+      'checked', PortalsDB.showItemCooldowns,
+      'func', function() PortalsDB.showItemCooldowns = not PortalsDB.showItemCooldowns end,
+      'closeWhenClicked', true
+    )
+    dewdrop:AddLine(
       'text', L['ATT_MINIMAP'],
       'checked', not PortalsDB.minimap.hide,
       'func', function() ToggleMinimap() end,
@@ -388,11 +412,15 @@ function frame:PLAYER_LOGIN()
 		PortalsDB.minimap = {}
 		PortalsDB.minimap.hide = false
     PortalsDB.showItems = true
-		PortalsDB.version = 2
+    PortalsDB.showItemCooldowns = true
+		PortalsDB.version = 3
 	end
 
   -- upgrade from version without showItems support
-  if PortalsDB.version < 2 then
+  if PortalsDB.version == 2 then
+    PortalsDB.showItemCooldowns = true
+    PortalsDB.version = 3
+  elseif PortalsDB.version < 2 then
     PortalsDB.showItems = true
     PortalsDB.version = 2
   end
@@ -454,6 +482,17 @@ function obj.OnEnter(self)
 	GameTooltip:AddDoubleLine(L['RCLICK'], L['SEE_SPELLS'], 0.9, 0.6, 0.2, 0.2, 1, 0.2)
   GameTooltip:AddLine(' ')
   GameTooltip:AddDoubleLine(L['HEARTHSTONE']..': '..GetBindLocation(), GetHearthCooldown(), 0.9, 0.6, 0.2, 0.2, 1, 0.2)
+
+  if PortalsDB.showItemCooldowns then
+    local cooldowns = GetItemCooldowns()
+    if #cooldowns ~= 0 then
+      for name, cooldown in pairs( cooldowns ) do
+        GameTooltip:AddLine(' ')
+        GameTooltip:AddDoubleLine(name, cooldown, 0.9, 0.6, 0.2, 0.2, 1, 0.2)
+      end
+    end
+  end
+
 	GameTooltip:AddLine(' ')
 	GameTooltip:AddDoubleLine(L['TP_P'], getReagentCount(L['TP_RUNE'])..'/'..getReagentCount(L['P_RUNE']), 0.9, 0.6, 0.2, 0.2, 1, 0.2)
 
