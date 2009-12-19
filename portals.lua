@@ -250,13 +250,14 @@ local function GetHearthCooldown()
     else                                                       
       cooldown = cooldown..' '..L['SEC']                     
     end
+    return cooldown
+  else
+    return L['N/A']
   end
-
-  return L['N/A']
 end
 
 local function GetItemCooldowns( )
-  local cooldown, startTime, duration, cooldowns = nil, nil, nil, {}
+  local cooldown, startTime, duration, cooldowns = nil, nil, nil, nil
 
   for _, item in pairs(items) do
     if GetItemCount( item ) > 0 then
@@ -271,6 +272,9 @@ local function GetItemCooldowns( )
         cooldown = cooldown..' '..L['SEC']
       end
       local name = GetItemInfo(item)
+      if cooldowns == nil then
+        cooldowns = {}
+      end
       cooldowns[name] = cooldown
     end
   end
@@ -485,7 +489,7 @@ function obj.OnEnter(self)
 
   if PortalsDB.showItemCooldowns then
     local cooldowns = GetItemCooldowns()
-    if #cooldowns ~= 0 then
+    if cooldowns ~= nil then
       for name, cooldown in pairs( cooldowns ) do
         GameTooltip:AddLine(' ')
         GameTooltip:AddDoubleLine(name, cooldown, 0.9, 0.6, 0.2, 0.2, 1, 0.2)
