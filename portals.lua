@@ -490,8 +490,8 @@ function obj.OnEnter(self)
   if PortalsDB.showItemCooldowns then
     local cooldowns = GetItemCooldowns()
     if cooldowns ~= nil then
+      GameTooltip:AddLine(' ')
       for name, cooldown in pairs( cooldowns ) do
-        GameTooltip:AddLine(' ')
         GameTooltip:AddDoubleLine(name, cooldown, 0.9, 0.6, 0.2, 0.2, 1, 0.2)
       end
     end
