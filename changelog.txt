@@ -1,8 +1,8 @@
-1.8.4:
+1.8.5:
   - feature: shows cooldowns of teleportation items in tooltip (can be turned off)
   - bugfix: if cooldown is lower than 1 min, it shows correctly remaining seconds
 
-1.8.3:
+1.8.4:
   - update: added new Kirin Tor rings
 
 1.8.3:
