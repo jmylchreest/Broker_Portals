@@ -17,7 +17,8 @@ local GetSpellCooldown = GetSpellCooldown
 local GetSpellInfo = GetSpellInfo
 local GetSpellName = GetSpellName
 
-local L = L
+local addonName, addonTable = ...
+local L = addonTable.L
 
 -- IDs of items usable for transportation
 local items = {
@@ -63,7 +64,7 @@ local scrolls = {
   37118  -- Scroll of Recall
 }
 
-obj = LibStub:GetLibrary('LibDataBroker-1.1'):NewDataObject('Broker_Portals', {
+obj = LibStub:GetLibrary('LibDataBroker-1.1'):NewDataObject(addonName, {
 	type = 'data source',
 	text = 'Portals',
 	icon = 'Interface\\Icons\\INV_Misc_Rune_06',

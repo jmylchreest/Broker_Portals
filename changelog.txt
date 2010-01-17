@@ -1,3 +1,6 @@
+1.8.6:
+  - bugfix: addon could cause problems with some other addons
+
 1.8.5:
   - feature: shows cooldowns of teleportation items in tooltip (can be turned off)
   - bugfix: if cooldown is lower than 1 min, it shows correctly remaining seconds
