@@ -1,3 +1,6 @@
+1.8.8:
+  - feature: don't show spells, that we don't have reagent for
+
 1.8.7:
   - update: added Jaina's Locket
 

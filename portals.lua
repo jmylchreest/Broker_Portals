@@ -152,39 +152,56 @@ local function hasItem(itemID)
 	return false
 end
 
+local function getReagentCount(name)
+	local count = 0
+  for bag = 0, 4 do
+    for slot = 1, GetContainerNumSlots(bag) do
+      local item = GetContainerItemLink(bag, slot)
+      if item then
+        if item:find(name) then
+          local _, itemCount = GetContainerItemInfo(bag, slot)
+          count = count + itemCount
+        end
+      end
+    end
+  end
+	
+	return count
+end
+
 local function SetupSpells()
 	local spells = {
 		Alliance = {
-			3561,  --TP:Stormwind
-			3562,  --TP:Ironforge
-			3565,  --TP:Darnassus
-			32271, --TP:Exodar
-			49359, --TP:Theramore
-			33690, --TP:Shattrath
-			53140, --TP:Dalaran
-			10059, --P:Stormwind
-			11416, --P:Ironforge
-			11419, --P:Darnassus
-			32266, --P:Exodar
-			49360, --P:Theramore
-			33691, --P:Shattrath
-			53142  --P:Dalaran
+			{3561, 'TP_RUNE'},  --TP:Stormwind
+			{3562, 'TP_RUNE'},  --TP:Ironforge
+			{3565, 'TP_RUNE'},  --TP:Darnassus
+			{32271, 'TP_RUNE'}, --TP:Exodar
+			{49359, 'TP_RUNE'}, --TP:Theramore
+			{33690, 'TP_RUNE'}, --TP:Shattrath
+			{53140, 'TP_RUNE'}, --TP:Dalaran
+			{10059, 'P_RUNE'}, --P:Stormwind
+			{11416, 'P_RUNE'}, --P:Ironforge
+			{11419, 'P_RUNE'}, --P:Darnassus
+			{32266, 'P_RUNE'}, --P:Exodar
+			{49360, 'P_RUNE'}, --P:Theramore
+			{33691, 'P_RUNE'}, --P:Shattrath
+			{53142, 'P_RUNE'}  --P:Dalaran
 		},
 		Horde = {
-			3563,  --TP:Undercity
-			3566,  --TP:Thunder Bluff
-			3567,  --TP:Orgrimmar
-			32272, --TP:Silvermoon
-			49358, --TP:Stonard
-			35715, --TP:Shattrath
-			53140, --TP:Dalaran
-			11418, --P:Undercity
-			11420, --P:Thunder Bluff
-			11417, --P:Orgrimmar
-			32267, --P:Silvermoon
-			49361, --P:Stonard
-			35717, --P:Shattrath
-			53142  --P:Dalaran
+			{3563, 'TP_RUNE'},  --TP:Undercity
+			{3566, 'TP_RUNE'},  --TP:Thunder Bluff
+			{3567, 'TP_RUNE'},  --TP:Orgrimmar
+			{32272, 'TP_RUNE'}, --TP:Silvermoon
+			{49358, 'TP_RUNE'}, --TP:Stonard
+			{35715, 'TP_RUNE'}, --TP:Shattrath
+			{53140, 'TP_RUNE'}, --TP:Dalaran
+			{11418, 'P_RUNE'}, --P:Undercity
+			{11420, 'P_RUNE'}, --P:Thunder Bluff
+			{11417, 'P_RUNE'}, --P:Orgrimmar
+			{32267, 'P_RUNE'}, --P:Silvermoon
+			{49361, 'P_RUNE'}, --P:Stonard
+			{35717, 'P_RUNE'}, --P:Shattrath
+			{53142, 'P_RUNE'}  --P:Dalaran
 		}
 	}
 	
@@ -193,16 +210,16 @@ local function SetupSpells()
 		portals = spells[UnitFactionGroup('player')]
 	elseif class == 'DEATHKNIGHT' then
 		portals = {
-			50977 --Death Gate
-			}
+			{50977, 'TRUE'} --Death Gate
+		}
 	elseif class == 'DRUID' then
 		portals = {
-			18960 --TP:Moonglade
-			}
+			{18960, 'TRUE'} --TP:Moonglade
+		}
 	elseif class == 'SHAMAN' then
 		portals = {
-			556 --Astral Recall
-			}
+			{556, 'TRUE'} --Astral Recall
+		}
 	end
 
 	spells = nil
@@ -214,12 +231,17 @@ local function UpdateSpells()
 	end
 	
 	if portals then
+    local reagentCache = {}
+    reagentCache['TRUE'] = true
+    reagentCache['P_RUNE'] = getReagentCount(L['P_RUNE']) > 0
+    reagentCache['TP_RUNE'] = getReagentCount(L['TP_RUNE']) > 0
+  
 		for _,unTransSpell in ipairs(portals) do
 			
-			local spell, _, spellIcon = GetSpellInfo(unTransSpell)
+			local spell, _, spellIcon = GetSpellInfo(unTransSpell[1])
 			local spellid = findSpell(spell)
-			
-			if spellid then	
+
+			if spellid and reagentCache[unTransSpell[2]] then
 				methods[spell] = {
 					spellid = spellid,
 					text = spell,
@@ -355,8 +377,10 @@ local function UpdateMenu(level, value)
       'text', 	'Broker_Portals',
       'isTitle', 	true
     )
-    dewdrop:AddLine()
 
+    methods = {}
+    UpdateSpells()
+    dewdrop:AddLine()
     for k,v in pairsByKeys(methods) do
       if v.secure and GetSpellCooldown(v.text) == 0 then
         dewdrop:AddLine(
@@ -440,23 +464,6 @@ end
 
 function frame:SKILL_LINES_CHANGED()
 	UpdateSpells()
-end
-
-local function getReagentCount(name)
-	local count = 0
-  for bag = 0, 4 do
-    for slot = 1, GetContainerNumSlots(bag) do
-      local item = GetContainerItemLink(bag, slot)
-      if item then
-        if item:find(name) then
-          local _, itemCount = GetContainerItemInfo(bag, slot)
-          count = count + itemCount
-        end
-      end
-    end
-  end
-	
-	return count
 end
 
 -- All credit for this func goes to Tekkub and his picoGuild!
