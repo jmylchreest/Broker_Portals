@@ -1,3 +1,6 @@
+1.8.9:
+  - update: added spanish (esMX) and chinese (zhCN) localizations
+
 1.8.8:
   - feature: don't show spells, that we don't have reagent for
 
