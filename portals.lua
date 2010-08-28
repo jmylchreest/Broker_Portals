@@ -99,7 +99,7 @@ local function pairsByKeys(t)
 	return iter
 end
 
-local function findSpell(spellName)
+function findSpell(spellName)
 	local i = 1
 	while true do
 		local s = GetSpellName(i, BOOKTYPE_SPELL)
