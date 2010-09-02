@@ -107,7 +107,7 @@ function findSpell(spellName)
 			break
 		end
 
-		if s == spellName then
+		if strlower(strtrim(s)) == strlower(strtrim(spellName)) then
 			return i
 		end
 
