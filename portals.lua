@@ -99,7 +99,7 @@ local function pairsByKeys(t)
 	return iter
 end
 
-function findSpell(spellName)
+local function findSpell(spellName)
 	local i = 1
 	while true do
 		local s = GetSpellName(i, BOOKTYPE_SPELL)
@@ -207,7 +207,8 @@ local function SetupSpells()
 	
 	local _, class = UnitClass('player')
 	if class == 'MAGE' then
-		portals = spells[UnitFactionGroup('player')]
+    local faction = UnitFactionGroup('player')
+		portals = spells[faction]
 	elseif class == 'DEATHKNIGHT' then
 		portals = {
 			{50977, 'TRUE'} --Death Gate
