@@ -67,7 +67,7 @@ local scrolls = {
 
 obj = LibStub:GetLibrary('LibDataBroker-1.1'):NewDataObject(addonName, {
 	type = 'data source',
-	text = 'Portals',
+	text = L['P'],
 	icon = 'Interface\\Icons\\INV_Misc_Rune_06',
 })
 local obj = obj
@@ -99,7 +99,7 @@ local function pairsByKeys(t)
 	return iter
 end
 
-local function findSpell(spellName)
+function findSpell(spellName)
 	local i = 1
 	while true do
 		local s = GetSpellName(i, BOOKTYPE_SPELL)
@@ -508,7 +508,7 @@ function obj.OnEnter(self)
   end
 
 	GameTooltip:AddLine(' ')
-	GameTooltip:AddDoubleLine(L['TP_P'], getReagentCount(L['TP_RUNE'])..'/'..getReagentCount(L['P_RUNE']), 0.9, 0.6, 0.2, 0.2, 1, 0.2)
+	GameTooltip:AddDoubleLine(L['TP']..' / '..L['P'], getReagentCount(L['TP_RUNE'])..'/'..getReagentCount(L['P_RUNE']), 0.9, 0.6, 0.2, 0.2, 1, 0.2)
 
 	GameTooltip:Show()
 end
