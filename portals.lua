@@ -234,8 +234,10 @@ local function UpdateSpells()
 	if portals then
     local reagentCache = {}
     reagentCache['TRUE'] = true
-    reagentCache['P_RUNE'] = getReagentCount(L['P_RUNE']) > 0
-    reagentCache['TP_RUNE'] = getReagentCount(L['TP_RUNE']) > 0
+    --reagentCache['P_RUNE'] = getReagentCount(L['P_RUNE']) > 0
+    --reagentCache['TP_RUNE'] = getReagentCount(L['TP_RUNE']) > 0
+    reagentCache['P_RUNE'] = true
+    reagentCache['TP_RUNE'] = true
   
 		for _,unTransSpell in ipairs(portals) do
 			
