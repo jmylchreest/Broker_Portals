@@ -251,7 +251,7 @@ local function UpdateSpells()
           spellIcon = spellIcon,
           secure = {
             type = 'spell',
-            spell = spell,
+            spell = spell
           }
         }
       end
@@ -319,7 +319,7 @@ local function ShowHearthstone()
       text = L['INN']..' '..bindLoc
       secure = {
         type = 'item',
-        item = name,
+        item = name
       }
       break
     end
@@ -346,7 +346,7 @@ local function ShowOtherItems()
       name, _, _, _, _, _, _, _, _, icon = GetItemInfo(itemID)
       secure = {
         type = 'item',
-        item = name,
+        item = name
       }
 
       dewdrop:AddLine(
