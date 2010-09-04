@@ -66,9 +66,9 @@ local scrolls = {
 }
 
 obj = LibStub:GetLibrary('LibDataBroker-1.1'):NewDataObject(addonName, {
-	type = 'data source',
-	text = L['P'],
-	icon = 'Interface\\Icons\\INV_Misc_Rune_06',
+  type = 'data source',
+  text = L['P'],
+  icon = 'Interface\\Icons\\INV_Misc_Rune_06',
 })
 local obj = obj
 local methods	= {}
@@ -81,38 +81,38 @@ frame:RegisterEvent('SKILL_LINES_CHANGED')
 
 
 local function pairsByKeys(t)
-	local a = {}
-	for n in pairs(t) do
-		table.insert(a, n)
-	end
-	table.sort(a)
-	
-	local i = 0
-	local iter = function ()
-		i = i + 1
-		if a[i] == nil then
-			return nil
-		else
-			return a[i], t[a[i]]
-		end
-	end
-	return iter
+  local a = {}
+  for n in pairs(t) do
+    table.insert(a, n)
+  end
+  table.sort(a)
+
+  local i = 0
+  local iter = function ()
+    i = i + 1
+    if a[i] == nil then
+      return nil
+    else
+      return a[i], t[a[i]]
+    end
+  end
+  return iter
 end
 
 function findSpell(spellName)
-	local i = 1
-	while true do
-		local s = GetSpellName(i, BOOKTYPE_SPELL)
-		if not s then
-			break
-		end
+  local i = 1
+  while true do
+    local s = GetSpellName(i, BOOKTYPE_SPELL)
+    if not s then
+      break
+    end
 
-		if strlower(strtrim(s)) == strlower(strtrim(spellName)) then
-			return i
-		end
+    if strlower(strtrim(s)) == strlower(strtrim(spellName)) then
+      return i
+    end
 
-		i = i + 1
-	end
+    i = i + 1
+  end
 end
 
 -- returns true, if player has item with given ID in inventory or bags and it's not on cooldown
@@ -133,7 +133,7 @@ local function hasItem(itemID)
     end
   end
   -- scan bags
-	for bag = 0, 4 do
+  for bag = 0, 4 do
     for slot = 1, GetContainerNumSlots(bag) do
       item = GetContainerItemLink(bag, slot)
       if item then
@@ -149,11 +149,11 @@ local function hasItem(itemID)
     end
   end
 
-	return false
+  return false
 end
 
 local function getReagentCount(name)
-	local count = 0
+  local count = 0
   for bag = 0, 4 do
     for slot = 1, GetContainerNumSlots(bag) do
       local item = GetContainerItemLink(bag, slot)
@@ -165,117 +165,117 @@ local function getReagentCount(name)
       end
     end
   end
-	
-	return count
+
+  return count
 end
 
 local function SetupSpells()
-	local spells = {
-		Alliance = {
-			{3561, 'TP_RUNE'},  --TP:Stormwind
-			{3562, 'TP_RUNE'},  --TP:Ironforge
-			{3565, 'TP_RUNE'},  --TP:Darnassus
-			{32271, 'TP_RUNE'}, --TP:Exodar
-			{49359, 'TP_RUNE'}, --TP:Theramore
-			{33690, 'TP_RUNE'}, --TP:Shattrath
-			{53140, 'TP_RUNE'}, --TP:Dalaran
-			{10059, 'P_RUNE'}, --P:Stormwind
-			{11416, 'P_RUNE'}, --P:Ironforge
-			{11419, 'P_RUNE'}, --P:Darnassus
-			{32266, 'P_RUNE'}, --P:Exodar
-			{49360, 'P_RUNE'}, --P:Theramore
-			{33691, 'P_RUNE'}, --P:Shattrath
-			{53142, 'P_RUNE'}  --P:Dalaran
-		},
-		Horde = {
-			{3563, 'TP_RUNE'},  --TP:Undercity
-			{3566, 'TP_RUNE'},  --TP:Thunder Bluff
-			{3567, 'TP_RUNE'},  --TP:Orgrimmar
-			{32272, 'TP_RUNE'}, --TP:Silvermoon
-			{49358, 'TP_RUNE'}, --TP:Stonard
-			{35715, 'TP_RUNE'}, --TP:Shattrath
-			{53140, 'TP_RUNE'}, --TP:Dalaran
-			{11418, 'P_RUNE'}, --P:Undercity
-			{11420, 'P_RUNE'}, --P:Thunder Bluff
-			{11417, 'P_RUNE'}, --P:Orgrimmar
-			{32267, 'P_RUNE'}, --P:Silvermoon
-			{49361, 'P_RUNE'}, --P:Stonard
-			{35717, 'P_RUNE'}, --P:Shattrath
-			{53142, 'P_RUNE'}  --P:Dalaran
-		}
-	}
-	
-	local _, class = UnitClass('player')
-	if class == 'MAGE' then
-    local faction = UnitFactionGroup('player')
-		portals = spells[faction]
-	elseif class == 'DEATHKNIGHT' then
-		portals = {
-			{50977, 'TRUE'} --Death Gate
-		}
-	elseif class == 'DRUID' then
-		portals = {
-			{18960, 'TRUE'} --TP:Moonglade
-		}
-	elseif class == 'SHAMAN' then
-		portals = {
-			{556, 'TRUE'} --Astral Recall
-		}
-	end
+  local spells = {
+    Alliance = {
+      {3561, 'TP_RUNE'},  --TP:Stormwind
+      {3562, 'TP_RUNE'},  --TP:Ironforge
+      {3565, 'TP_RUNE'},  --TP:Darnassus
+      {32271, 'TP_RUNE'}, --TP:Exodar
+      {49359, 'TP_RUNE'}, --TP:Theramore
+      {33690, 'TP_RUNE'}, --TP:Shattrath
+      {53140, 'TP_RUNE'}, --TP:Dalaran
+      {10059, 'P_RUNE'}, --P:Stormwind
+      {11416, 'P_RUNE'}, --P:Ironforge
+      {11419, 'P_RUNE'}, --P:Darnassus
+      {32266, 'P_RUNE'}, --P:Exodar
+      {49360, 'P_RUNE'}, --P:Theramore
+      {33691, 'P_RUNE'}, --P:Shattrath
+      {53142, 'P_RUNE'}  --P:Dalaran
+    },
+    Horde = {
+      {3563, 'TP_RUNE'},  --TP:Undercity
+      {3566, 'TP_RUNE'},  --TP:Thunder Bluff
+      {3567, 'TP_RUNE'},  --TP:Orgrimmar
+      {32272, 'TP_RUNE'}, --TP:Silvermoon
+      {49358, 'TP_RUNE'}, --TP:Stonard
+      {35715, 'TP_RUNE'}, --TP:Shattrath
+      {53140, 'TP_RUNE'}, --TP:Dalaran
+      {11418, 'P_RUNE'}, --P:Undercity
+      {11420, 'P_RUNE'}, --P:Thunder Bluff
+      {11417, 'P_RUNE'}, --P:Orgrimmar
+      {32267, 'P_RUNE'}, --P:Silvermoon
+      {49361, 'P_RUNE'}, --P:Stonard
+      {35717, 'P_RUNE'}, --P:Shattrath
+      {53142, 'P_RUNE'}  --P:Dalaran
+    }
+  }
 
-	spells = nil
+  local _, class = UnitClass('player')
+  if class == 'MAGE' then
+    local faction = UnitFactionGroup('player')
+    portals = spells[faction]
+  elseif class == 'DEATHKNIGHT' then
+    portals = {
+      {50977, 'TRUE'} --Death Gate
+    }
+  elseif class == 'DRUID' then
+    portals = {
+      {18960, 'TRUE'} --TP:Moonglade
+    }
+  elseif class == 'SHAMAN' then
+    portals = {
+      {556, 'TRUE'} --Astral Recall
+    }
+  end
+
+  spells = nil
 end
 
 local function UpdateSpells()
-	if not portals then
-		SetupSpells()
-	end
-	
-	if portals then
+  if not portals then
+    SetupSpells()
+  end
+
+  if portals then
     local reagentCache = {}
     reagentCache['TRUE'] = true
-    --reagentCache['P_RUNE'] = getReagentCount(L['P_RUNE']) > 0
-    --reagentCache['TP_RUNE'] = getReagentCount(L['TP_RUNE']) > 0
+    reagentCache['P_RUNE'] = getReagentCount(L['P_RUNE']) > 0
+    reagentCache['TP_RUNE'] = getReagentCount(L['TP_RUNE']) > 0
     reagentCache['P_RUNE'] = true
     reagentCache['TP_RUNE'] = true
-  
-		for _,unTransSpell in ipairs(portals) do
-			
-			local spell, _, spellIcon = GetSpellInfo(unTransSpell[1])
-			local spellid = findSpell(spell)
 
-			if spellid and reagentCache[unTransSpell[2]] then
-				methods[spell] = {
-					spellid = spellid,
-					text = spell,
-					spellIcon = spellIcon,
-					secure = {
-						type = 'spell',
-						spell = spell,
-					}
-				}
-			end
-		end
-	end
+    for _,unTransSpell in ipairs(portals) do
+
+      local spell, _, spellIcon = GetSpellInfo(unTransSpell[1])
+      local spellid = findSpell(spell)
+
+      if spellid and reagentCache[unTransSpell[2]] then
+        methods[spell] = {
+          spellid = spellid,
+          text = spell,
+          spellIcon = spellIcon,
+          secure = {
+            type = 'spell',
+            spell = spell,
+          }
+        }
+      end
+    end
+  end
 end
 
 local function UpdateIcon(icon)
-	obj.icon = icon
+  obj.icon = icon
 end
 
 local function GetHearthCooldown()
-	local cooldown, startTime, duration
+  local cooldown, startTime, duration
 
-  if GetItemCount(6948) > 0 then                                 
-    startTime, duration = GetItemCooldown(6948)                
-    cooldown = duration - (GetTime() - startTime)              
-    if cooldown >= 60 then                                     
-      cooldown = math_floor( cooldown / 60 )                 
-      cooldown = cooldown..' '..L['MIN']                     
-    elseif cooldown <= 0 then                                  
-      cooldown = L['READY']                                  
-    else                                                       
-      cooldown = cooldown..' '..L['SEC']                     
+  if GetItemCount(6948) > 0 then
+    startTime, duration = GetItemCooldown(6948)
+    cooldown = duration - (GetTime() - startTime)
+    if cooldown >= 60 then
+      cooldown = math_floor( cooldown / 60 )
+      cooldown = cooldown..' '..L['MIN']
+    elseif cooldown <= 0 then
+      cooldown = L['READY']
+    else
+      cooldown = cooldown..' '..L['SEC']
     end
     return cooldown
   else
@@ -310,7 +310,7 @@ local function GetItemCooldowns( )
 end
 
 local function ShowHearthstone()
-	local text, secure, icon, name
+  local text, secure, icon, name
   local bindLoc = GetBindLocation()
 
   for _, itemID in ipairs(scrolls) do
@@ -325,16 +325,16 @@ local function ShowHearthstone()
     end
   end
 
-	if secure ~= nil then
-		dewdrop:AddLine(
-			'text', text,
-			'secure', secure,
-			'icon', icon,
-			'func', function() UpdateIcon(icon) end,
-			'closeWhenClicked', true
-		)
-		dewdrop:AddLine()
-	end
+  if secure ~= nil then
+    dewdrop:AddLine(
+      'text', text,
+      'secure', secure,
+      'icon', icon,
+      'func', function() UpdateIcon(icon) end,
+      'closeWhenClicked', true
+    )
+    dewdrop:AddLine()
+  end
 end
 
 local function ShowOtherItems()
@@ -365,13 +365,13 @@ local function ShowOtherItems()
 end
 
 local function ToggleMinimap()
-	local hide = not PortalsDB.minimap.hide
-	PortalsDB.minimap.hide = hide
-	if hide then
-		icon:Hide('Broker_Portals')
-	else
-		icon:Show('Broker_Portals')
-	end
+  local hide = not PortalsDB.minimap.hide
+  PortalsDB.minimap.hide = hide
+  if hide then
+    icon:Hide('Broker_Portals')
+  else
+    icon:Show('Broker_Portals')
+  end
 end
 
 local function UpdateMenu(level, value)
@@ -395,9 +395,9 @@ local function UpdateMenu(level, value)
         )
       end
     end
-    
+
     dewdrop:AddLine()
-    
+
     ShowHearthstone()
 
     if PortalsDB.showItems then
@@ -409,7 +409,7 @@ local function UpdateMenu(level, value)
       'hasArrow', true,
       'value', 'options'
     )
-    
+
     dewdrop:AddLine(
       'text', CLOSE,
       'tooltipTitle', CLOSE,
@@ -439,15 +439,15 @@ local function UpdateMenu(level, value)
 end
 
 function frame:PLAYER_LOGIN()
-	-- PortalsDB.minimap is there for smooth upgrade of SVs from old version
-	if (not PortalsDB) or (PortalsDB.version == nil) then
-		PortalsDB = {}
-		PortalsDB.minimap = {}
-		PortalsDB.minimap.hide = false
+  -- PortalsDB.minimap is there for smooth upgrade of SVs from old version
+  if (not PortalsDB) or (PortalsDB.version == nil) then
+    PortalsDB = {}
+    PortalsDB.minimap = {}
+    PortalsDB.minimap.hide = false
     PortalsDB.showItems = true
     PortalsDB.showItemCooldowns = true
-		PortalsDB.version = 3
-	end
+    PortalsDB.version = 3
+  end
 
   -- upgrade from version without showItems support
   if PortalsDB.version == 2 then
@@ -458,44 +458,44 @@ function frame:PLAYER_LOGIN()
     PortalsDB.version = 2
   end
 
-	if icon then
-		icon:Register('Broker_Portals', obj, PortalsDB.minimap)
-	end
+  if icon then
+    icon:Register('Broker_Portals', obj, PortalsDB.minimap)
+  end
 
-	self:UnregisterEvent('PLAYER_LOGIN')
+  self:UnregisterEvent('PLAYER_LOGIN')
 end
 
 function frame:SKILL_LINES_CHANGED()
-	UpdateSpells()
+  UpdateSpells()
 end
 
 -- All credit for this func goes to Tekkub and his picoGuild!
 local function GetTipAnchor(frame)
-		local x, y = frame:GetCenter()
-		if not x or not y then return 'TOPLEFT', 'BOTTOMLEFT' end
-		local hhalf = (x > UIParent:GetWidth() * 2 / 3) and 'RIGHT' or (x < UIParent:GetWidth() / 3) and 'LEFT' or ''
-		local vhalf = (y > UIParent:GetHeight() / 2) and 'TOP' or 'BOTTOM'
-		return vhalf..hhalf, frame, (vhalf == 'TOP' and 'BOTTOM' or 'TOP')..hhalf
+    local x, y = frame:GetCenter()
+    if not x or not y then return 'TOPLEFT', 'BOTTOMLEFT' end
+    local hhalf = (x > UIParent:GetWidth() * 2 / 3) and 'RIGHT' or (x < UIParent:GetWidth() / 3) and 'LEFT' or ''
+    local vhalf = (y > UIParent:GetHeight() / 2) and 'TOP' or 'BOTTOM'
+    return vhalf..hhalf, frame, (vhalf == 'TOP' and 'BOTTOM' or 'TOP')..hhalf
 end
 
 function obj.OnClick(self, button)
-  GameTooltip:Hide() 
-	if button == 'RightButton' then
-		dewdrop:Open(self, 'children', function(level, value) UpdateMenu(level, value) end)
-	end
+  GameTooltip:Hide()
+  if button == 'RightButton' then
+    dewdrop:Open(self, 'children', function(level, value) UpdateMenu(level, value) end)
+  end
 end
 
-function obj.OnLeave() 
-	GameTooltip:Hide() 
+function obj.OnLeave()
+  GameTooltip:Hide()
 end
 
 function obj.OnEnter(self)
- 	GameTooltip:SetOwner(self, 'ANCHOR_NONE')
-	GameTooltip:SetPoint(GetTipAnchor(self))
-	GameTooltip:ClearLines()
+   GameTooltip:SetOwner(self, 'ANCHOR_NONE')
+  GameTooltip:SetPoint(GetTipAnchor(self))
+  GameTooltip:ClearLines()
 
-	GameTooltip:AddLine('Broker Portals')
-	GameTooltip:AddDoubleLine(L['RCLICK'], L['SEE_SPELLS'], 0.9, 0.6, 0.2, 0.2, 1, 0.2)
+  GameTooltip:AddLine('Broker Portals')
+  GameTooltip:AddDoubleLine(L['RCLICK'], L['SEE_SPELLS'], 0.9, 0.6, 0.2, 0.2, 1, 0.2)
   GameTooltip:AddLine(' ')
   GameTooltip:AddDoubleLine(L['HEARTHSTONE']..': '..GetBindLocation(), GetHearthCooldown(), 0.9, 0.6, 0.2, 0.2, 1, 0.2)
 
@@ -509,10 +509,10 @@ function obj.OnEnter(self)
     end
   end
 
-	GameTooltip:AddLine(' ')
-	GameTooltip:AddDoubleLine(L['TP']..' / '..L['P'], getReagentCount(L['TP_RUNE'])..'/'..getReagentCount(L['P_RUNE']), 0.9, 0.6, 0.2, 0.2, 1, 0.2)
+  GameTooltip:AddLine(' ')
+  GameTooltip:AddDoubleLine(L['TP']..' / '..L['P'], getReagentCount(L['TP_RUNE'])..'/'..getReagentCount(L['P_RUNE']), 0.9, 0.6, 0.2, 0.2, 1, 0.2)
 
-	GameTooltip:Show()
+  GameTooltip:Show()
 end
 
 -- slashcommand definition
