@@ -19,7 +19,7 @@ local GetSpellName = GetSpellName
 
 local addonName, addonTable = ...
 local L = addonTable.L
-
+ 
 -- IDs of items usable for transportation
 local items = {
   -- Dalaran rings
