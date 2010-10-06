@@ -1,3 +1,7 @@
+1.8.10:
+  - bugfix: was displaying spells, that I din't have reagents for
+  - feature: added option to output casting portals to chat (off by default)
+
 1.8.9:
   - update: added spanish (esMX) and chinese (zhCN) localizations
 

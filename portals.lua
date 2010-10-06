@@ -16,6 +16,9 @@ local GetInventoryItemLink = GetInventoryItemLink
 local GetSpellCooldown = GetSpellCooldown
 local GetSpellInfo = GetSpellInfo
 local GetSpellName = GetSpellName
+local SendChatMessage = SendChatMessage
+local UnitInRaid = UnitInRaid
+local GetNumPartyMembers = GetNumPartyMembers
 
 local addonName, addonTable = ...
 local L = addonTable.L
@@ -236,8 +239,6 @@ local function UpdateSpells()
     reagentCache['TRUE'] = true
     reagentCache['P_RUNE'] = getReagentCount(L['P_RUNE']) > 0
     reagentCache['TP_RUNE'] = getReagentCount(L['TP_RUNE']) > 0
-    reagentCache['P_RUNE'] = true
-    reagentCache['TP_RUNE'] = true
 
     for _,unTransSpell in ipairs(portals) do
 
@@ -249,6 +250,7 @@ local function UpdateSpells()
           spellid = spellid,
           text = spell,
           spellIcon = spellIcon,
+          isPortal = unTransSpell[2] == 'P_RUNE',
           secure = {
             type = 'spell',
             spell = spell
@@ -384,13 +386,19 @@ local function UpdateMenu(level, value)
     methods = {}
     UpdateSpells()
     dewdrop:AddLine()
+    local chatType = (UnitInRaid("player") and "RAID") or (GetNumPartyMembers() > 0 and "PARTY") or nil
     for k,v in pairsByKeys(methods) do
       if v.secure and GetSpellCooldown(v.text) == 0 then
         dewdrop:AddLine(
           'text', v.text,
           'secure',	v.secure,
           'icon', v.spellIcon,
-          'func', function() UpdateIcon(v.spellIcon) end,
+          'func', function()
+              UpdateIcon(v.spellIcon)
+              if v.isPortal and chatType then
+                SendChatMessage(L['ANNOUNCEMENT'] .. ' ' .. v.text, chatType)
+              end
+            end,
           'closeWhenClicked', true
         )
       end
@@ -435,6 +443,12 @@ local function UpdateMenu(level, value)
       'func', function() ToggleMinimap() end,
       'closeWhenClicked', true
     )
+    dewdrop:AddLine(
+      'text', L['ANNOUNCE'],
+      'checked', PortalsDB.announce,
+      'func', function() PortalsDB.announce = not PortalsDB.announce end,
+      'closeWhenClicked', true
+    )
   end
 end
 
@@ -446,16 +460,23 @@ function frame:PLAYER_LOGIN()
     PortalsDB.minimap.hide = false
     PortalsDB.showItems = true
     PortalsDB.showItemCooldowns = true
-    PortalsDB.version = 3
+    PortalsDB.announce = false
+    PortalsDB.version = 4
   end
 
-  -- upgrade from version without showItems support
-  if PortalsDB.version == 2 then
+  -- upgrade from versions
+  if PortalsDB.version == 3 then
+    PortalsDB.announce = false
+    PortalsDB.version = 4
+  elseif PortalsDB.version == 2 then
     PortalsDB.showItemCooldowns = true
-    PortalsDB.version = 3
+    PortalsDB.announce = false
+    PortalsDB.version = 4
   elseif PortalsDB.version < 2 then
     PortalsDB.showItems = true
-    PortalsDB.version = 2
+    PortalsDB.showItemCooldowns = true
+    PortalsDB.announce = false
+    PortalsDB.version = 4
   end
 
   if icon then
