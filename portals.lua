@@ -15,7 +15,7 @@ local GetInventoryItemCooldown = GetInventoryItemCooldown
 local GetInventoryItemLink = GetInventoryItemLink
 local GetSpellCooldown = GetSpellCooldown
 local GetSpellInfo = GetSpellInfo
-local GetSpellName = GetSpellName
+local GetSpellBookItemName = GetSpellBookItemName
 local SendChatMessage = SendChatMessage
 local UnitInRaid = UnitInRaid
 local GetNumPartyMembers = GetNumPartyMembers
@@ -105,7 +105,7 @@ end
 function findSpell(spellName)
   local i = 1
   while true do
-    local s = GetSpellName(i, BOOKTYPE_SPELL)
+    local s = GetSpellBookItemName(i, BOOKTYPE_SPELL)
     if not s then
       break
     end
