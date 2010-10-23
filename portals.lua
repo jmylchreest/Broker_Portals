@@ -387,6 +387,7 @@ local function UpdateMenu(level, value)
     UpdateSpells()
     dewdrop:AddLine()
     local chatType = (UnitInRaid("player") and "RAID") or (GetNumPartyMembers() > 0 and "PARTY") or nil
+    local announce = PortalsDB.announce
     for k,v in pairsByKeys(methods) do
       if v.secure and GetSpellCooldown(v.text) == 0 then
         dewdrop:AddLine(
@@ -395,7 +396,7 @@ local function UpdateMenu(level, value)
           'icon', v.spellIcon,
           'func', function()
               UpdateIcon(v.spellIcon)
-              if v.isPortal and chatType then
+              if announce and v.isPortal and chatType then
                 SendChatMessage(L['ANNOUNCEMENT'] .. ' ' .. v.text, chatType)
               end
             end,

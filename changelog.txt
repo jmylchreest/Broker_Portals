@@ -1,3 +1,6 @@
+1.8.12:
+  - bugfix: shouting to chat when casting a portalwas broken
+
 1.8.11:
   - update: updated for patch 4.0.1
 
