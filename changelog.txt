@@ -1,3 +1,6 @@
+1.8.13:
+  - update: added The Schools of Arcane Magic - Mastery
+
 1.8.12:
   - bugfix: shouting to chat when casting a portalwas broken
 

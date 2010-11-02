@@ -56,7 +56,8 @@ local items = {
   32757, -- Blessed Medallion of Karabor
   35230, -- Darnarian's Scroll of Teleportation
   50287, -- Boots of the Bay
-  52251  -- Jaina's Locket
+  52251, -- Jaina's Locket
+  43824  -- The Schools of Arcane Magic - Mastery
 }
 
 -- IDs of items usable instead of hearthstone
