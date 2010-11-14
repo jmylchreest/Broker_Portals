@@ -313,14 +313,13 @@ local function GetItemCooldowns( )
 end
 
 local function ShowHearthstone()
-  local text, secure, icon, name
   local bindLoc = GetBindLocation()
 
   for _, itemID in ipairs(scrolls) do
     if hasItem(itemID) then
-      name, _, _, _, _, _, _, _, _, icon = GetItemInfo(itemID)
-      text = L['INN']..' '..bindLoc
-      secure = {
+      local name, _, _, _, _, _, _, _, _, icon = GetItemInfo(itemID)
+      local text = L['INN']..' '..bindLoc
+      local secure = {
         type = 'item',
         item = name
       }
@@ -341,13 +340,12 @@ local function ShowHearthstone()
 end
 
 local function ShowOtherItems()
-  local secure, icon, name
   local i = 0
 
   for _, itemID in ipairs(items) do
     if hasItem(itemID) then
-      name, _, _, _, _, _, _, _, _, icon = GetItemInfo(itemID)
-      secure = {
+      local name, _, _, _, _, _, _, _, _, icon = GetItemInfo(itemID)
+      local secure = {
         type = 'item',
         item = name
       }

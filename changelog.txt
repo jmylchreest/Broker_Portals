@@ -1,3 +1,6 @@
+1.8.14:
+  - bugfix: sometimes wrong icons were displayed
+
 1.8.13:
   - update: added The Schools of Arcane Magic - Mastery
 
