@@ -278,7 +278,7 @@ local function GetHearthCooldown()
     elseif cooldown <= 0 then
       cooldown = L['READY']
     else
-      cooldown = cooldown..' '..L['SEC']
+      cooldown = math_floor(cooldown)..' '..L['SEC']
     end
     return cooldown
   else
@@ -314,12 +314,13 @@ end
 
 local function ShowHearthstone()
   local bindLoc = GetBindLocation()
+  local secure, text, icon, name
 
   for _, itemID in ipairs(scrolls) do
     if hasItem(itemID) then
-      local name, _, _, _, _, _, _, _, _, icon = GetItemInfo(itemID)
-      local text = L['INN']..' '..bindLoc
-      local secure = {
+      name, _, _, _, _, _, _, _, _, icon = GetItemInfo(itemID)
+      text = L['INN']..' '..bindLoc
+      secure = {
         type = 'item',
         item = name
       }
