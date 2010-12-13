@@ -1,5 +1,5 @@
 1.8.17:
-  - update: added Tol Barad portals, Potion of Deepholm
+  - update: added some of the new Cataclysm items
 
 1.8.16:
   - update: added teleports/portals to Tol Barad

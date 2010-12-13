@@ -58,7 +58,9 @@ local items = {
   50287, -- Boots of the Bay
   52251, -- Jaina's Locket
   43824, -- The Schools of Arcane Magic - Mastery
-  58487  -- Potion of Deepholm
+  58487, -- Potion of Deepholm
+  65274, -- Cloak of Coordination (Horde)
+  65360  -- Cloak of Coordination (Alliance)
 }
 
 -- IDs of items usable instead of hearthstone
