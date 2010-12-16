@@ -1,8 +1,5 @@
-1.8.17:
-  - update: added some of the new Cataclysm items
-
 1.8.16:
-  - update: added teleports/portals to Tol Barad
+  - update: added some of the new Cataclysm items
 
 1.8.15:
   - bugfix: fixed occasional problems with scrolls of recall
