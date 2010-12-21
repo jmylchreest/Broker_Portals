@@ -60,7 +60,9 @@ local items = {
   43824, -- The Schools of Arcane Magic - Mastery
   58487, -- Potion of Deepholm
   65274, -- Cloak of Coordination (Horde)
-  65360  -- Cloak of Coordination (Alliance)
+  65360, -- Cloak of Coordination (Alliance)
+  63378, -- Hellscream's Reach Tabard
+  63379  -- Baradin's Wardens Tabard
 }
 
 -- IDs of items usable instead of hearthstone
