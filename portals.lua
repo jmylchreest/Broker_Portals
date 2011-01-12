@@ -62,7 +62,8 @@ local items = {
   65274, -- Cloak of Coordination (Horde)
   65360, -- Cloak of Coordination (Alliance)
   63378, -- Hellscream's Reach Tabard
-  63379  -- Baradin's Wardens Tabard
+  63379, -- Baradin's Wardens Tabard
+  64488  -- The Innkeeper's Daughter
 }
 
 -- IDs of items usable instead of hearthstone
