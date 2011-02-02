@@ -63,13 +63,18 @@ local items = {
   65360, -- Cloak of Coordination (Alliance)
   63378, -- Hellscream's Reach Tabard
   63379, -- Baradin's Wardens Tabard
-  64488  -- The Innkeeper's Daughter
+  64457, -- The Last Relic of Argus
+  63206, -- Wrap of Unity (Alliance)
+  63207, -- Wrap of Unity (Horde)
+  63352, -- Shroud of Cooperation (Alliance)
+  63353  -- Shroud of Cooperation (Horde)
 }
 
 -- IDs of items usable instead of hearthstone
 local scrolls = {
-  6948,  -- Hearthstone
+  64488, -- The Innkeeper's Daughter
   28585, -- Ruby Slippers
+  6948,  -- Hearthstone
   44315, -- Scroll of Recall III
   44314, -- Scroll of Recall II
   37118  -- Scroll of Recall
