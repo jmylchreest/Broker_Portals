@@ -1,3 +1,6 @@
+1.8.20:
+  - update: moved The Innkeeper's Daughter back to the list of other items, where it actually belongs
+
 1.8.19:
   - update: added some more Cataclysm items
 

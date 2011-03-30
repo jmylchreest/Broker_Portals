@@ -67,13 +67,13 @@ local items = {
   63206, -- Wrap of Unity (Alliance)
   63207, -- Wrap of Unity (Horde)
   63352, -- Shroud of Cooperation (Alliance)
-  63353  -- Shroud of Cooperation (Horde)
+  63353, -- Shroud of Cooperation (Horde)
+  64488, -- The Innkeeper's Daughter
+  28585  -- Ruby Slippers
 }
 
 -- IDs of items usable instead of hearthstone
 local scrolls = {
-  64488, -- The Innkeeper's Daughter
-  28585, -- Ruby Slippers
   6948,  -- Hearthstone
   44315, -- Scroll of Recall III
   44314, -- Scroll of Recall II
