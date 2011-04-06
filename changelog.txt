@@ -1,3 +1,6 @@
+1.8.21:
+  - bugfix: made item cooldowns below 1 min readable
+
 1.8.20:
   - update: moved The Innkeeper's Daughter back to the list of other items, where it actually belongs
 

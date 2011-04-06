@@ -314,7 +314,7 @@ local function GetItemCooldowns( )
       elseif cooldown <= 0 then
         cooldown = L['READY']
       else
-        cooldown = cooldown..' '..L['SEC']
+        cooldown = math_floor(cooldown)..' '..L['SEC']
       end
       local name = GetItemInfo(item)
       if cooldowns == nil then
