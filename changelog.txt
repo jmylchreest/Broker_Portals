@@ -1,3 +1,8 @@
+1.8.22:
+  - update: added Have Group, Will Travel
+  - update: apdated for patch 4.1
+  - update: improved hearthstone support
+
 1.8.21:
   - bugfix: made item cooldowns below 1 min readable
 

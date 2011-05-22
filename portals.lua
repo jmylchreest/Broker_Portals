@@ -67,13 +67,13 @@ local items = {
   63206, -- Wrap of Unity (Alliance)
   63207, -- Wrap of Unity (Horde)
   63352, -- Shroud of Cooperation (Alliance)
-  63353, -- Shroud of Cooperation (Horde)
-  64488, -- The Innkeeper's Daughter
-  28585  -- Ruby Slippers
+  63353  -- Shroud of Cooperation (Horde)
 }
 
 -- IDs of items usable instead of hearthstone
 local scrolls = {
+  64488, -- The Innkeeper's Daughter
+  28585, -- Ruby Slippers
   6948,  -- Hearthstone
   44315, -- Scroll of Recall III
   44314, -- Scroll of Recall II
@@ -242,6 +242,9 @@ local function SetupSpells()
     }
   end
 
+  -- guild perks
+  portals[#portals] = {83967, 'TRUE'} -- Have Group, Will Travel
+
   spells = nil
 end
 
@@ -284,21 +287,23 @@ end
 local function GetHearthCooldown()
   local cooldown, startTime, duration
 
-  if GetItemCount(6948) > 0 then
-    startTime, duration = GetItemCooldown(6948)
-    cooldown = duration - (GetTime() - startTime)
-    if cooldown >= 60 then
-      cooldown = math_floor( cooldown / 60 )
-      cooldown = cooldown..' '..L['MIN']
-    elseif cooldown <= 0 then
-      cooldown = L['READY']
-    else
-      cooldown = math_floor(cooldown)..' '..L['SEC']
+  for _, item in pairs(scrolls) do
+    if GetItemCount(item) > 0 then
+      startTime, duration = GetItemCooldown(item)
+      cooldown = duration - (GetTime() - startTime)
+      if cooldown >= 60 then
+        cooldown = math_floor( cooldown / 60 )
+        cooldown = cooldown..' '..L['MIN']
+      elseif cooldown <= 0 then
+        cooldown = L['READY']
+      else
+        cooldown = math_floor(cooldown)..' '..L['SEC']
+      end
+      return cooldown
     end
-    return cooldown
-  else
-    return L['N/A']
   end
+
+  return L['N/A']
 end
 
 local function GetItemCooldowns( )
