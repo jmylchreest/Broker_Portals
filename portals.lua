@@ -240,6 +240,8 @@ local function SetupSpells()
     portals = {
       {556, 'TRUE'} --Astral Recall
     }
+  else
+    potals = {}
   end
 
   -- guild perks
