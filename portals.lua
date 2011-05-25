@@ -187,40 +187,40 @@ end
 local function SetupSpells()
   local spells = {
     Alliance = {
-      {3561, 'TP_RUNE'},  --TP:Stormwind
-      {3562, 'TP_RUNE'},  --TP:Ironforge
-      {3565, 'TP_RUNE'},  --TP:Darnassus
-      {32271, 'TP_RUNE'}, --TP:Exodar
-      {49359, 'TP_RUNE'}, --TP:Theramore
-      {33690, 'TP_RUNE'}, --TP:Shattrath
-      {53140, 'TP_RUNE'}, --TP:Dalaran
-      {88342, 'TP_RUNE'}, --TP:Tol Barad
-      {10059, 'P_RUNE'},  --P:Stormwind
-      {11416, 'P_RUNE'},  --P:Ironforge
-      {11419, 'P_RUNE'},  --P:Darnassus
-      {32266, 'P_RUNE'},  --P:Exodar
-      {49360, 'P_RUNE'},  --P:Theramore
-      {33691, 'P_RUNE'},  --P:Shattrath
-      {53142, 'P_RUNE'},  --P:Dalaran
-      {88345, 'P_RUNE'}   --P:Tol Barad
+      {3561, 'TP_RUNE'},  -- TP:Stormwind
+      {3562, 'TP_RUNE'},  -- TP:Ironforge
+      {3565, 'TP_RUNE'},  -- TP:Darnassus
+      {32271, 'TP_RUNE'}, -- TP:Exodar
+      {49359, 'TP_RUNE'}, -- TP:Theramore
+      {33690, 'TP_RUNE'}, -- TP:Shattrath
+      {53140, 'TP_RUNE'}, -- TP:Dalaran
+      {88342, 'TP_RUNE'}, -- TP:Tol Barad
+      {10059, 'P_RUNE'},  -- P:Stormwind
+      {11416, 'P_RUNE'},  -- P:Ironforge
+      {11419, 'P_RUNE'},  -- P:Darnassus
+      {32266, 'P_RUNE'},  -- P:Exodar
+      {49360, 'P_RUNE'},  -- P:Theramore
+      {33691, 'P_RUNE'},  -- P:Shattrath
+      {53142, 'P_RUNE'},  -- P:Dalaran
+      {88345, 'P_RUNE'}   -- P:Tol Barad
     },
     Horde = {
-      {3563, 'TP_RUNE'},  --TP:Undercity
-      {3566, 'TP_RUNE'},  --TP:Thunder Bluff
-      {3567, 'TP_RUNE'},  --TP:Orgrimmar
-      {32272, 'TP_RUNE'}, --TP:Silvermoon
-      {49358, 'TP_RUNE'}, --TP:Stonard
-      {35715, 'TP_RUNE'}, --TP:Shattrath
-      {53140, 'TP_RUNE'}, --TP:Dalaran
-      {88344, 'TP_RUNE'}, --TP:Tol Barad
-      {11418, 'P_RUNE'},  --P:Undercity
-      {11420, 'P_RUNE'},  --P:Thunder Bluff
-      {11417, 'P_RUNE'},  --P:Orgrimmar
-      {32267, 'P_RUNE'},  --P:Silvermoon
-      {49361, 'P_RUNE'},  --P:Stonard
-      {35717, 'P_RUNE'},  --P:Shattrath
-      {53142, 'P_RUNE'},  --P:Dalaran
-      {88346, 'P_RUNE'}   --P:Tol Barad
+      {3563, 'TP_RUNE'},  -- TP:Undercity
+      {3566, 'TP_RUNE'},  -- TP:Thunder Bluff
+      {3567, 'TP_RUNE'},  -- TP:Orgrimmar
+      {32272, 'TP_RUNE'}, -- TP:Silvermoon
+      {49358, 'TP_RUNE'}, -- TP:Stonard
+      {35715, 'TP_RUNE'}, -- TP:Shattrath
+      {53140, 'TP_RUNE'}, -- TP:Dalaran
+      {88344, 'TP_RUNE'}, -- TP:Tol Barad
+      {11418, 'P_RUNE'},  -- P:Undercity
+      {11420, 'P_RUNE'},  -- P:Thunder Bluff
+      {11417, 'P_RUNE'},  -- P:Orgrimmar
+      {32267, 'P_RUNE'},  -- P:Silvermoon
+      {49361, 'P_RUNE'},  -- P:Stonard
+      {35717, 'P_RUNE'},  -- P:Shattrath
+      {53142, 'P_RUNE'},  -- P:Dalaran
+      {88346, 'P_RUNE'}   -- P:Tol Barad
     }
   }
 
@@ -230,23 +230,24 @@ local function SetupSpells()
     portals = spells[faction]
   elseif class == 'DEATHKNIGHT' then
     portals = {
-      {50977, 'TRUE'} --Death Gate
+      {50977, 'TRUE'} -- Death Gate
     }
   elseif class == 'DRUID' then
     portals = {
-      {18960, 'TRUE'} --TP:Moonglade
+      {18960, 'TRUE'} -- TP:Moonglade
     }
   elseif class == 'SHAMAN' then
     portals = {
-      {556, 'TRUE'} --Astral Recall
+      {556, 'TRUE'} -- Astral Recall
     }
   else
     portals = {}
   end
 
   -- guild perks
-  portals[#portals] = {83967, 'TRUE'} -- Have Group, Will Travel
+  portals[#portals + 1] = {83967, 'TRUE'} -- Have Group, Will Travel
 
+  print(#portals)
   spells = nil
 end
 

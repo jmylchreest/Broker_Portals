@@ -1,3 +1,6 @@
+1.8.23:
+  - bugfix: Teleport: Moonglade is now back!
+
 1.8.22:
   - bugfix: fixed error on classes with no teleporting spells
 
