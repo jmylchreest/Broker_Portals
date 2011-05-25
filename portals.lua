@@ -241,7 +241,7 @@ local function SetupSpells()
       {556, 'TRUE'} --Astral Recall
     }
   else
-    potals = {}
+    portals = {}
   end
 
   -- guild perks

@@ -1,3 +1,6 @@
+1.8.22:
+  - bugfix: fixed error on classes with no teleporting spells
+
 1.8.21:
   - update: added Have Group, Will Travel
   - update: apdated for patch 4.1
