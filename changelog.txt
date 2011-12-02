@@ -1,3 +1,6 @@
+1.8.25:
+  - update: updated for patch 4.3
+
 1.8.24:
   - update: updated for patch 4.2
 
