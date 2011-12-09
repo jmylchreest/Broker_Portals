@@ -247,7 +247,6 @@ local function SetupSpells()
   -- guild perks
   portals[#portals + 1] = {83967, 'TRUE'} -- Have Group, Will Travel
 
-  print(#portals)
   spells = nil
 end
 
