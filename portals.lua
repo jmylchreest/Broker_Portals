@@ -3,6 +3,7 @@ if not LibStub then return end
 local dewdrop = LibStub('Dewdrop-2.0', true)
 local icon = LibStub('LibDBIcon-1.0')
 
+local _
 local math_floor = math.floor
 
 local CreateFrame = CreateFrame
@@ -18,7 +19,7 @@ local GetSpellInfo = GetSpellInfo
 local GetSpellBookItemName = GetSpellBookItemName
 local SendChatMessage = SendChatMessage
 local UnitInRaid = UnitInRaid
-local GetNumPartyMembers = GetNumPartyMembers
+local GetNumGroupMembers = GetNumGroupMembers
 
 local addonName, addonTable = ...
 local L = addonTable.L
@@ -226,8 +227,7 @@ local function SetupSpells()
 
   local _, class = UnitClass('player')
   if class == 'MAGE' then
-    local faction = UnitFactionGroup('player')
-    portals = spells[faction]
+    portals = spells[select(1, UnitFactionGroup('player'))]
   elseif class == 'DEATHKNIGHT' then
     portals = {
       {50977, 'TRUE'} -- Death Gate
@@ -244,9 +244,6 @@ local function SetupSpells()
     portals = {}
   end
 
-  -- guild perks
-  portals[#portals + 1] = {83967, 'TRUE'} -- Have Group, Will Travel
-
   spells = nil
 end
 
@@ -256,17 +253,12 @@ local function UpdateSpells()
   end
 
   if portals then
-    local reagentCache = {}
-    reagentCache['TRUE'] = true
-    reagentCache['P_RUNE'] = getReagentCount(L['P_RUNE']) > 0
-    reagentCache['TP_RUNE'] = getReagentCount(L['TP_RUNE']) > 0
-
     for _,unTransSpell in ipairs(portals) do
 
       local spell, _, spellIcon = GetSpellInfo(unTransSpell[1])
       local spellid = findSpell(spell)
 
-      if spellid and reagentCache[unTransSpell[2]] then
+      if spellid then
         methods[spell] = {
           spellid = spellid,
           text = spell,
@@ -408,7 +400,7 @@ local function UpdateMenu(level, value)
     methods = {}
     UpdateSpells()
     dewdrop:AddLine()
-    local chatType = (UnitInRaid("player") and "RAID") or (GetNumPartyMembers() > 0 and "PARTY") or nil
+    local chatType = (UnitInRaid("player") and "RAID") or (GetNumGroupMembers() > 0 and "PARTY") or nil
     local announce = PortalsDB.announce
     for k,v in pairsByKeys(methods) do
       if v.secure and GetSpellCooldown(v.text) == 0 then
@@ -552,9 +544,6 @@ function obj.OnEnter(self)
       end
     end
   end
-
-  GameTooltip:AddLine(' ')
-  GameTooltip:AddDoubleLine(L['TP']..' / '..L['P'], getReagentCount(L['TP_RUNE'])..'/'..getReagentCount(L['P_RUNE']), 0.9, 0.6, 0.2, 0.2, 1, 0.2)
 
   GameTooltip:Show()
 end
