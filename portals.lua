@@ -256,20 +256,22 @@ local function UpdateSpells()
   if portals then
     for _,unTransSpell in ipairs(portals) do
 
-      local spell, _, spellIcon = GetSpellInfo(unTransSpell[1])
-      local spellid = IsPlayerSpell(spell) and findSpell(spell) or nil
+      if IsPlayerSpell(unTransSpell[1]) then
+        local spell, _, spellIcon = GetSpellInfo(unTransSpell[1])
+        local spellid = findSpell(spell)
 
-      if spellid then
-        methods[spell] = {
-          spellid = spellid,
-          text = spell,
-          spellIcon = spellIcon,
-          isPortal = unTransSpell[2] == 'P_RUNE',
-          secure = {
-            type = 'spell',
-            spell = spell
+        if spellid then
+          methods[spell] = {
+            spellid = spellid,
+            text = spell,
+            spellIcon = spellIcon,
+            isPortal = unTransSpell[2] == 'P_RUNE',
+            secure = {
+              type = 'spell',
+              spell = spell
+            }
           }
-        }
+        end
       end
     end
   end
