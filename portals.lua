@@ -20,6 +20,7 @@ local GetSpellBookItemName = GetSpellBookItemName
 local SendChatMessage = SendChatMessage
 local UnitInRaid = UnitInRaid
 local GetNumGroupMembers = GetNumGroupMembers
+local IsPlayerSpell = IsPlayerSpell
 
 local addonName, addonTable = ...
 local L = addonTable.L
@@ -256,7 +257,7 @@ local function UpdateSpells()
     for _,unTransSpell in ipairs(portals) do
 
       local spell, _, spellIcon = GetSpellInfo(unTransSpell[1])
-      local spellid = findSpell(spell)
+      local spellid = IsPlayerSpell(spell) and findSpell(spell) or nil
 
       if spellid then
         methods[spell] = {
