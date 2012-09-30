@@ -1,3 +1,6 @@
+1.8.29:
+  - update: added Wormhole Generator: Pandaria and Vale of Eternal Blossoms portals
+
 1.8.28:
   - bugfix: fixed error for mages that didn't learn all teleports yet
 
