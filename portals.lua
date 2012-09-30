@@ -206,7 +206,7 @@ local function SetupSpells()
       {49360, 'P_RUNE'},   -- P:Theramore
       {33691, 'P_RUNE'},   -- P:Shattrath
       {53142, 'P_RUNE'},   -- P:Dalaran
-      {88345, 'P_RUNE'}    -- P:Tol Barad
+      {88345, 'P_RUNE'},   -- P:Tol Barad
       {132620, 'P_RUNE'}   -- P:Vale of Eternal Blossoms
     },
     Horde = {
@@ -226,7 +226,7 @@ local function SetupSpells()
       {49361, 'P_RUNE'},   -- P:Stonard
       {35717, 'P_RUNE'},   -- P:Shattrath
       {53142, 'P_RUNE'},   -- P:Dalaran
-      {88346, 'P_RUNE'}    -- P:Tol Barad
+      {88346, 'P_RUNE'},   -- P:Tol Barad
       {132626, 'P_RUNE'}   -- P:Vale of Eternal Blossoms
     }
   }
