@@ -1,3 +1,6 @@
+1.8.30:
+  - update: added Ancient Dalaran teleports
+
 1.8.29:
   - update: added Wormhole Generator: Pandaria and Vale of Eternal Blossoms portals
 

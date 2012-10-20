@@ -199,6 +199,7 @@ local function SetupSpells()
       {53140, 'TP_RUNE'},  -- TP:Dalaran
       {88342, 'TP_RUNE'},  -- TP:Tol Barad
       {132621, 'TP_RUNE'}, -- TP:Vale of Eternal Blossoms
+      {120145, 'TP_RUNE'}, -- TP:Ancient Dalaran
       {10059, 'P_RUNE'},   -- P:Stormwind
       {11416, 'P_RUNE'},   -- P:Ironforge
       {11419, 'P_RUNE'},   -- P:Darnassus
@@ -207,7 +208,8 @@ local function SetupSpells()
       {33691, 'P_RUNE'},   -- P:Shattrath
       {53142, 'P_RUNE'},   -- P:Dalaran
       {88345, 'P_RUNE'},   -- P:Tol Barad
-      {132620, 'P_RUNE'}   -- P:Vale of Eternal Blossoms
+      {132620, 'P_RUNE'},  -- P:Vale of Eternal Blossoms
+      {120146, 'P_RUNE'}   -- P:Ancient Dalaran
     },
     Horde = {
       {3563, 'TP_RUNE'},   -- TP:Undercity
