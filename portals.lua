@@ -70,7 +70,11 @@ local items = {
   63206, -- Wrap of Unity (Alliance)
   63207, -- Wrap of Unity (Horde)
   63352, -- Shroud of Cooperation (Alliance)
-  63353  -- Shroud of Cooperation (Horde)
+  63353, -- Shroud of Cooperation (Horde)
+  95050, -- The Brassiest Knuckle (Horde)
+  95051, -- The Brassiest Knuckle (Alliance)
+  95567, -- Kirin Tor Beacon
+  95568  -- Sunreaver Beacon
 }
 
 -- IDs of items usable instead of hearthstone
