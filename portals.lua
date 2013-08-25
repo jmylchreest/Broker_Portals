@@ -24,7 +24,7 @@ local IsPlayerSpell = IsPlayerSpell
 
 local addonName, addonTable = ...
 local L = addonTable.L
- 
+
 -- IDs of items usable for transportation
 local items = {
   -- Dalaran rings
@@ -121,6 +121,13 @@ local function pairsByKeys(t)
   return iter
 end
 
+local function tconcat(t1, t2)
+  for i = 1, #t2 do
+    t1[#t1+1] = t2[i]
+  end
+  return t1
+end
+
 function findSpell(spellName)
   local i = 1
   while true do
@@ -203,7 +210,6 @@ local function SetupSpells()
       {53140, 'TP_RUNE'},  -- TP:Dalaran
       {88342, 'TP_RUNE'},  -- TP:Tol Barad
       {132621, 'TP_RUNE'}, -- TP:Vale of Eternal Blossoms
-      {120145, 'TP_RUNE'}, -- TP:Ancient Dalaran
       {10059, 'P_RUNE'},   -- P:Stormwind
       {11416, 'P_RUNE'},   -- P:Ironforge
       {11419, 'P_RUNE'},   -- P:Darnassus
@@ -212,8 +218,7 @@ local function SetupSpells()
       {33691, 'P_RUNE'},   -- P:Shattrath
       {53142, 'P_RUNE'},   -- P:Dalaran
       {88345, 'P_RUNE'},   -- P:Tol Barad
-      {132620, 'P_RUNE'},  -- P:Vale of Eternal Blossoms
-      {120146, 'P_RUNE'}   -- P:Ancient Dalaran
+      {132620, 'P_RUNE'}   -- P:Vale of Eternal Blossoms
     },
     Horde = {
       {3563, 'TP_RUNE'},   -- TP:Undercity
@@ -237,9 +242,23 @@ local function SetupSpells()
     }
   }
 
+  local sharedSpells = {
+      {120145, 'TP_RUNE'}, -- TP:Ancient Dalaran
+      {120146, 'P_RUNE'},  -- P:Ancient Dalaran
+      {131204, 'TRUE'},    -- Path of the Jade Serpent
+      {131205, 'TRUE'},    -- Path of the Stout Brew
+      {131206, 'TRUE'},    -- Path of the Shado-Pan
+      {131222, 'TRUE'},    -- Path of the Mogu King
+      {131225, 'TRUE'},    -- Path of the Setting Sun
+      {131231, 'TRUE'},    -- Path of the Scarlet Blade
+      {131229, 'TRUE'},    -- Path of the Scarlet Mitre
+      {131232, 'TRUE'},    -- Path of the Necromancer
+      {131228, 'TRUE'}    -- Path of the Black Ox
+  }
+
   local _, class = UnitClass('player')
   if class == 'MAGE' then
-    portals = spells[select(1, UnitFactionGroup('player'))]
+    portals = tconcat(spells[select(1, UnitFactionGroup('player'))], sharedSpells)
   elseif class == 'DEATHKNIGHT' then
     portals = {
       {50977, 'TRUE'} -- Death Gate
