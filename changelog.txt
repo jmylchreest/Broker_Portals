@@ -1,3 +1,6 @@
+1.8.33:
+  - update: added more missing items
+
 1.8.32:
   - update: added Ancient Dalaran teleports for the Horde
   - update: added golden challenge teleports
