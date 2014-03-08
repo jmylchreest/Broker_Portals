@@ -291,6 +291,11 @@ local function SetupSpells()
         portals = {
             { 556, 'TRUE' } -- Astral Recall
         }
+    elseif class == 'MONK' then
+        portals = {
+            { 126892, 'TRUE' }, -- Zen Pilgrimage
+            { 126895, 'TRUE' }  -- Zen Pilgrimage: Return
+        }
     else
         portals = {}
     end
