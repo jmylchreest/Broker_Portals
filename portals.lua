@@ -421,13 +421,17 @@ local function ShowOtherItems()
 
     for _, itemID in ipairs(items) do
         if hasItem(itemID) then
-            local name, _, _, _, _, _, _, _, _, icon = GetItemInfo(itemID)
+            local name, _, quality, _, _, _, _, _, _, icon = GetItemInfo(itemID)
             local secure = {
                 type = 'item',
                 item = name
             }
 
-            dewdrop:AddLine('text', name,
+            dewdrop:AddLine(
+                'text', name,
+                'textR', ITEM_QUALITY_COLORS[quality].r,
+                'textG', ITEM_QUALITY_COLORS[quality].g,
+                'textB', ITEM_QUALITY_COLORS[quality].b,
                 'secure', secure,
                 'icon', icon,
                 'func', function() UpdateIcon(icon) end,
@@ -462,7 +466,8 @@ local function UpdateMenu(level, value)
         local announce = PortalsDB.announce
         for k, v in pairsByKeys(methods) do
             if v.secure and GetSpellCooldown(v.text) == 0 then
-                dewdrop:AddLine('text', v.text,
+                dewdrop:AddLine(
+                    'text', v.text,
                     'secure', v.secure,
                     'icon', v.spellIcon,
                     'func', function()

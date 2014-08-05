@@ -1,3 +1,6 @@
+1.8.36:
+  - feature: color item names according to their item quality
+
 1.8.35:
   - update: Added Zen Pilgrimage
 
