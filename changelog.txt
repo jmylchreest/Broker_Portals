@@ -1,5 +1,6 @@
 1.8.36:
   - feature: color item names according to their item quality
+  - update: added One with Nature
 
 1.8.35:
   - update: Added Zen Pilgrimage

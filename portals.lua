@@ -285,7 +285,8 @@ local function SetupSpells()
         }
     elseif class == 'DRUID' then
         portals = {
-            { 18960, 'TRUE' } -- TP:Moonglade
+            { 18960,  'TRUE' }, -- TP:Moonglade
+            { 147420, 'TRUE' }  -- TP:One with Nature
         }
     elseif class == 'SHAMAN' then
         portals = {
