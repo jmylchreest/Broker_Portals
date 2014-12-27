@@ -1,3 +1,6 @@
+1.8.37:
+  - update: updated for 6.0.3
+
 1.8.36:
   - feature: color item names according to their item quality
   - update: added One with Nature

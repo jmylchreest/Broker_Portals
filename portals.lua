@@ -28,80 +28,82 @@ local L = addonTable.L
 -- IDs of items usable for transportation
 local items = {
     -- Dalaran rings
-    40586, -- Band of the Kirin Tor
-    48954, -- Etched Band of the Kirin Tor
-    48955, -- Etched Loop of the Kirin Tor
-    48956, -- Etched Ring of the Kirin Tor
-    48957, -- Etched Signet of the Kirin Tor
-    45688, -- Inscribed Band of the Kirin Tor
-    45689, -- Inscribed Loop of the Kirin Tor
-    45690, -- Inscribed Ring of the Kirin Tor
-    45691, -- Inscribed Signet of the Kirin Tor
-    44934, -- Loop of the Kirin Tor
-    44935, -- Ring of the Kirin Tor
-    40585, -- Signet of the Kirin Tor
-    51560, -- Runed Band of the Kirin Tor
-    51558, -- Runed Loop of the Kirin Tor
-    51559, -- Runed Ring of the Kirin Tor
-    51557, -- Runed Signet of the Kirin Tor
+    40586,  -- Band of the Kirin Tor
+    48954,  -- Etched Band of the Kirin Tor
+    48955,  -- Etched Loop of the Kirin Tor
+    48956,  -- Etched Ring of the Kirin Tor
+    48957,  -- Etched Signet of the Kirin Tor
+    45688,  -- Inscribed Band of the Kirin Tor
+    45689,  -- Inscribed Loop of the Kirin Tor
+    45690,  -- Inscribed Ring of the Kirin Tor
+    45691,  -- Inscribed Signet of the Kirin Tor
+    44934,  -- Loop of the Kirin Tor
+    44935,  -- Ring of the Kirin Tor
+    40585,  -- Signet of the Kirin Tor
+    51560,  -- Runed Band of the Kirin Tor
+    51558,  -- Runed Loop of the Kirin Tor
+    51559,  -- Runed Ring of the Kirin Tor
+    51557,  -- Runed Signet of the Kirin Tor
     -- Engineering Gadgets
-    30542, -- Dimensional Ripper - Area 52
-    18984, -- Dimensional Ripper - Everlook
-    18986, -- Ultrasafe Transporter: Gadgetzan
-    30544, -- Ultrasafe Transporter: Toshley's Station
-    48933, -- Wormhole Generator: Northrend
-    87215, -- Wormhole Generator: Pandaria
+    30542,  -- Dimensional Ripper - Area 52
+    18984,  -- Dimensional Ripper - Everlook
+    18986,  -- Ultrasafe Transporter: Gadgetzan
+    30544,  -- Ultrasafe Transporter: Toshley's Station
+    48933,  -- Wormhole Generator: Northrend
+    87215,  -- Wormhole Generator: Pandaria
+    112059, -- Wormhole Centrifuge
     -- Seasonal items
-    37863, -- Direbrew's Remote
-    21711, -- Lunar Festival Invitation
+    37863,  -- Direbrew's Remote
+    21711,  -- Lunar Festival Invitation
     -- Miscellaneous
-    46874, -- Argent Crusader's Tabard
-    32757, -- Blessed Medallion of Karabor
-    35230, -- Darnarian's Scroll of Teleportation
-    50287, -- Boots of the Bay
-    52251, -- Jaina's Locket
-    43824, -- The Schools of Arcane Magic - Mastery
-    58487, -- Potion of Deepholm
-    65274, -- Cloak of Coordination (Horde)
-    65360, -- Cloak of Coordination (Alliance)
-    63378, -- Hellscream's Reach Tabard
-    63379, -- Baradin's Wardens Tabard
-    64457, -- The Last Relic of Argus
-    63206, -- Wrap of Unity (Alliance)
-    63207, -- Wrap of Unity (Horde)
-    63352, -- Shroud of Cooperation (Alliance)
-    63353, -- Shroud of Cooperation (Horde)
-    95050, -- The Brassiest Knuckle (Horde)
-    95051, -- The Brassiest Knuckle (Alliance)
-    95567, -- Kirin Tor Beacon
-    95568, -- Sunreaver Beacon
-    17690, -- Frostwolf Insignia Rank 1 (Horde)
-    17905, -- Frostwolf Insignia Rank 2 (Horde)
-    17906, -- Frostwolf Insignia Rank 3 (Horde)
-    17907, -- Frostwolf Insignia Rank 4 (Horde)
-    17908, -- Frostwolf Insignia Rank 5 (Horde)
-    17909, -- Frostwolf Insignia Rank 6 (Horde)
-    17691, -- Stormpike Insignia Rank 1 (Alliance)
-    17900, -- Stormpike Insignia Rank 2 (Alliance)
-    17901, -- Stormpike Insignia Rank 3 (Alliance)
-    17902, -- Stormpike Insignia Rank 4 (Alliance)
-    17903, -- Stormpike Insignia Rank 5 (Alliance)
-    17904, -- Stormpike Insignia Rank 6 (Alliance)
-    22631, -- Atiesh, Greatstaff of the Guardian
-    87548, -- Lorewalker's Lodestone
-    54452, -- Ethereal Portal
-    93672, -- Dark Portal
-    103678 -- Time-Lost Artifact
+    46874,  -- Argent Crusader's Tabard
+    32757,  -- Blessed Medallion of Karabor
+    35230,  -- Darnarian's Scroll of Teleportation
+    50287,  -- Boots of the Bay
+    52251,  -- Jaina's Locket
+    43824,  -- The Schools of Arcane Magic - Mastery
+    58487,  -- Potion of Deepholm
+    65274,  -- Cloak of Coordination (Horde)
+    65360,  -- Cloak of Coordination (Alliance)
+    63378,  -- Hellscream's Reach Tabard
+    63379,  -- Baradin's Wardens Tabard
+    64457,  -- The Last Relic of Argus
+    63206,  -- Wrap of Unity (Alliance)
+    63207,  -- Wrap of Unity (Horde)
+    63352,  -- Shroud of Cooperation (Alliance)
+    63353,  -- Shroud of Cooperation (Horde)
+    95050,  -- The Brassiest Knuckle (Horde)
+    95051,  -- The Brassiest Knuckle (Alliance)
+    95567,  -- Kirin Tor Beacon
+    95568,  -- Sunreaver Beacon
+    17690,  -- Frostwolf Insignia Rank 1 (Horde)
+    17905,  -- Frostwolf Insignia Rank 2 (Horde)
+    17906,  -- Frostwolf Insignia Rank 3 (Horde)
+    17907,  -- Frostwolf Insignia Rank 4 (Horde)
+    17908,  -- Frostwolf Insignia Rank 5 (Horde)
+    17909,  -- Frostwolf Insignia Rank 6 (Horde)
+    17691,  -- Stormpike Insignia Rank 1 (Alliance)
+    17900,  -- Stormpike Insignia Rank 2 (Alliance)
+    17901,  -- Stormpike Insignia Rank 3 (Alliance)
+    17902,  -- Stormpike Insignia Rank 4 (Alliance)
+    17903,  -- Stormpike Insignia Rank 5 (Alliance)
+    17904,  -- Stormpike Insignia Rank 6 (Alliance)
+    22631,  -- Atiesh, Greatstaff of the Guardian
+    87548,  -- Lorewalker's Lodestone
+    54452,  -- Ethereal Portal
+    93672,  -- Dark Portal
+    103678, -- Time-Lost Artifact
+    110560  -- Garrison Hearthstone
 }
 
 -- IDs of items usable instead of hearthstone
 local scrolls = {
     64488, -- The Innkeeper's Daughter
     28585, -- Ruby Slippers
-    6948, -- Hearthstone
+    6948,  -- Hearthstone
     44315, -- Scroll of Recall III
     44314, -- Scroll of Recall II
-    37118 -- Scroll of Recall
+    37118  -- Scroll of Recall
 }
 
 -- Gold Challenge portals
@@ -114,7 +116,7 @@ local challengeSpells = {
     { 131231, 'TRUE' }, -- Path of the Scarlet Blade
     { 131229, 'TRUE' }, -- Path of the Scarlet Mitre
     { 131232, 'TRUE' }, -- Path of the Necromancer
-    { 131228, 'TRUE' } -- Path of the Black Ox
+    { 131228, 'TRUE' }  -- Path of the Black Ox
 }
 
 obj = LibStub:GetLibrary('LibDataBroker-1.1'):NewDataObject(addonName, {
@@ -231,48 +233,52 @@ end
 local function SetupSpells()
     local spells = {
         Alliance = {
-            { 3561, 'TP_RUNE' }, -- TP:Stormwind
-            { 3562, 'TP_RUNE' }, -- TP:Ironforge
-            { 3565, 'TP_RUNE' }, -- TP:Darnassus
-            { 32271, 'TP_RUNE' }, -- TP:Exodar
-            { 49359, 'TP_RUNE' }, -- TP:Theramore
-            { 33690, 'TP_RUNE' }, -- TP:Shattrath
-            { 53140, 'TP_RUNE' }, -- TP:Dalaran
-            { 88342, 'TP_RUNE' }, -- TP:Tol Barad
+            { 3561, 'TP_RUNE' },   -- TP:Stormwind
+            { 3562, 'TP_RUNE' },   -- TP:Ironforge
+            { 3565, 'TP_RUNE' },   -- TP:Darnassus
+            { 32271, 'TP_RUNE' },  -- TP:Exodar
+            { 49359, 'TP_RUNE' },  -- TP:Theramore
+            { 33690, 'TP_RUNE' },  -- TP:Shattrath
+            { 53140, 'TP_RUNE' },  -- TP:Dalaran
+            { 88342, 'TP_RUNE' },  -- TP:Tol Barad
             { 132621, 'TP_RUNE' }, -- TP:Vale of Eternal Blossoms
             { 120145, 'TP_RUNE' }, -- TP:Ancient Dalaran
-            { 10059, 'P_RUNE' }, -- P:Stormwind
-            { 11416, 'P_RUNE' }, -- P:Ironforge
-            { 11419, 'P_RUNE' }, -- P:Darnassus
-            { 32266, 'P_RUNE' }, -- P:Exodar
-            { 49360, 'P_RUNE' }, -- P:Theramore
-            { 33691, 'P_RUNE' }, -- P:Shattrath
-            { 53142, 'P_RUNE' }, -- P:Dalaran
-            { 88345, 'P_RUNE' }, -- P:Tol Barad
-            { 120146, 'P_RUNE' }, -- P:Ancient Dalaran
-            { 132620, 'P_RUNE' } -- P:Vale of Eternal Blossoms
+            { 176248, 'TP_RUNE' }, -- TP:StormShield
+            { 10059, 'P_RUNE' },   -- P:Stormwind
+            { 11416, 'P_RUNE' },   -- P:Ironforge
+            { 11419, 'P_RUNE' },   -- P:Darnassus
+            { 32266, 'P_RUNE' },   -- P:Exodar
+            { 49360, 'P_RUNE' },   -- P:Theramore
+            { 33691, 'P_RUNE' },   -- P:Shattrath
+            { 53142, 'P_RUNE' },   -- P:Dalaran
+            { 88345, 'P_RUNE' },   -- P:Tol Barad
+            { 120146, 'P_RUNE' },  -- P:Ancient Dalaran
+            { 132620, 'P_RUNE' },  -- P:Vale of Eternal Blossoms
+            { 176246, 'P_RUNE' }   -- P:StormShield
         },
         Horde = {
-            { 3563, 'TP_RUNE' }, -- TP:Undercity
-            { 3566, 'TP_RUNE' }, -- TP:Thunder Bluff
-            { 3567, 'TP_RUNE' }, -- TP:Orgrimmar
-            { 32272, 'TP_RUNE' }, -- TP:Silvermoon
-            { 49358, 'TP_RUNE' }, -- TP:Stonard
-            { 35715, 'TP_RUNE' }, -- TP:Shattrath
-            { 53140, 'TP_RUNE' }, -- TP:Dalaran
-            { 88344, 'TP_RUNE' }, -- TP:Tol Barad
+            { 3563, 'TP_RUNE' },   -- TP:Undercity
+            { 3566, 'TP_RUNE' },   -- TP:Thunder Bluff
+            { 3567, 'TP_RUNE' },   -- TP:Orgrimmar
+            { 32272, 'TP_RUNE' },  -- TP:Silvermoon
+            { 49358, 'TP_RUNE' },  -- TP:Stonard
+            { 35715, 'TP_RUNE' },  -- TP:Shattrath
+            { 53140, 'TP_RUNE' },  -- TP:Dalaran
+            { 88344, 'TP_RUNE' },  -- TP:Tol Barad
             { 132627, 'TP_RUNE' }, -- TP:Vale of Eternal Blossoms
             { 120145, 'TP_RUNE' }, -- TP:Ancient Dalaran
-            { 11418, 'P_RUNE' }, -- P:Undercity
-            { 11420, 'P_RUNE' }, -- P:Thunder Bluff
-            { 11417, 'P_RUNE' }, -- P:Orgrimmar
-            { 32267, 'P_RUNE' }, -- P:Silvermoon
-            { 49361, 'P_RUNE' }, -- P:Stonard
-            { 35717, 'P_RUNE' }, -- P:Shattrath
-            { 53142, 'P_RUNE' }, -- P:Dalaran
-            { 88346, 'P_RUNE' }, -- P:Tol Barad
-            { 120146, 'P_RUNE' }, -- P:Ancient Dalaran
-            { 132626, 'P_RUNE' } -- P:Vale of Eternal Blossoms
+            { 176242, 'TP_RUNE' }, -- TP:Warspear
+            { 11418, 'P_RUNE' },   -- P:Undercity
+            { 11420, 'P_RUNE' },   -- P:Thunder Bluff
+            { 11417, 'P_RUNE' },   -- P:Orgrimmar
+            { 32267, 'P_RUNE' },   -- P:Silvermoon
+            { 49361, 'P_RUNE' },   -- P:Stonard
+            { 35717, 'P_RUNE' },   -- P:Shattrath
+            { 53142, 'P_RUNE' },   -- P:Dalaran
+            { 88346, 'P_RUNE' },   -- P:Tol Barad
+            { 120146, 'P_RUNE' },  -- P:Ancient Dalaran
+            { 132626, 'P_RUNE' },  -- P:Vale of Eternal Blossoms
+            { 176244, 'P_RUNE' }   -- P:Warspear
         }
     }
 
