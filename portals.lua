@@ -93,7 +93,8 @@ local items = {
     54452,  -- Ethereal Portal
     93672,  -- Dark Portal
     103678, -- Time-Lost Artifact
-    110560  -- Garrison Hearthstone
+    110560, -- Garrison Hearthstone
+    118663  -- Relic of Karabor
 }
 
 -- IDs of items usable instead of hearthstone

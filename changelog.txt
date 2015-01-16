@@ -1,3 +1,6 @@
+1.8.38:
+  - update: added Relic of Karabor
+
 1.8.37:
   - update: updated for 6.0.3
 
