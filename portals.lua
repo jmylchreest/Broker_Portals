@@ -95,6 +95,9 @@ local items = {
     103678, -- Time-Lost Artifact
     110560, -- Garrison Hearthstone
     118663  -- Relic of Karabor
+    128353, -- Admiral's Compass
+    128502, -- Hunter's Seeking Crystal
+    128503  -- Master Hunter's Seeking Crystal
 }
 
 -- IDs of items usable instead of hearthstone
@@ -312,6 +315,8 @@ local function SetupSpells()
 end
 
 local function GenerateLinks(spells)
+    local itemsGenerated = 0
+
     for _, unTransSpell in ipairs(spells) do
         if IsPlayerSpell(unTransSpell[1]) then
             local spell, _, spellIcon = GetSpellInfo(unTransSpell[1])
@@ -328,21 +333,26 @@ local function GenerateLinks(spells)
                         spell = spell
                     }
                 }
+                itemsGenerated = itemsGenerated + 1
             end
         end
     end
+
+    return itemsGenerated
 end
 
-local function UpdateSpells()
+local function UpdateClassSpells()
     if not portals then
         SetupSpells()
     end
 
     if portals then
-        GenerateLinks(portals)
+        return GenerateLinks(portals)
     end
+end
 
-    GenerateLinks(challengeSpells)
+local function UpdateChallengeSpells()
+    return GenerateLinks(challengeSpells)
 end
 
 local function UpdateIcon(icon)
@@ -468,8 +478,17 @@ local function UpdateMenu(level, value)
             'isTitle', true)
 
         methods = {}
-        UpdateSpells()
-        dewdrop:AddLine()
+
+        local spells = UpdateSpells()
+        if spells > 0 then
+          dewdrop:AddLine()
+        end
+
+        local challengeSpells = UpdateChallengeSpells()
+        if challengeSpells > 0 then
+          dewdrop:AddLine()
+        end
+
         local chatType = (UnitInRaid("player") and "RAID") or (GetNumGroupMembers() > 0 and "PARTY") or nil
         local announce = PortalsDB.announce
         for k, v in pairsByKeys(methods) do
@@ -559,7 +578,8 @@ function frame:PLAYER_LOGIN()
 end
 
 function frame:SKILL_LINES_CHANGED()
-    UpdateSpells()
+    UpdateClassSpells()
+    UpdateChallengeSpells()
 end
 
 -- All credit for this func goes to Tekkub and his picoGuild!
