@@ -94,6 +94,7 @@ local items = {
     93672,  -- Dark Portal
     103678, -- Time-Lost Artifact
     110560, -- Garrison Hearthstone
+    118662, -- Bladespire Relic
     118663, -- Relic of Karabor
     128353, -- Admiral's Compass
     128502, -- Hunter's Seeking Crystal
