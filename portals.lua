@@ -96,6 +96,7 @@ local items = {
     110560, -- Garrison Hearthstone
     118662, -- Bladespire Relic
     118663, -- Relic of Karabor
+    118907, -- Pit Fighter's Punching Ring
     128353, -- Admiral's Compass
     128502, -- Hunter's Seeking Crystal
     128503  -- Master Hunter's Seeking Crystal

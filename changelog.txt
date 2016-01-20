@@ -1,3 +1,6 @@
+1.8.42:
+  - update: added Pit Fighter's Punching Ring
+
 1.8.41:
   - update: added Bladespire Relic
 
