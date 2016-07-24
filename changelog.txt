@@ -1,3 +1,6 @@
+1.8.43:
+  - update: updated for 7.0.3 (thank you tiker!)
+
 1.8.42:
   - update: added Pit Fighter's Punching Ring
 
@@ -91,7 +94,7 @@
   - update: added The Schools of Arcane Magic - Mastery
 
 1.8.12:
-  - bugfix: shouting to chat when casting a portalwas broken
+  - bugfix: shouting to chat when casting a portal was broken
 
 1.8.11:
   - update: updated for patch 4.0.1

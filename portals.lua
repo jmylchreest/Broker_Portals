@@ -215,7 +215,28 @@ local function hasItem(itemID)
             end
         end
     end
-
+	-- check Toybox
+--	id, _, _, found = C_ToyBox.GetToyInfo(itemID)
+--	if found and tonumber(id) == itemID then
+--		if not C_ToyBox.IsToyUsable(itemID) then
+--			return false
+--		else
+--			return true
+--		end
+--	end
+	if not PlayerHasToy(itemID) then
+		return false
+	else
+		local startTime, duration, cooldown
+		startTime, duration = GetItemCooldown(itemID)
+		cooldown = duration - (GetTime() - startTime)
+		if not cooldown == 0 then
+			return false
+		else
+			return true
+		end --if
+	end --if
+	
     return false
 end
 
@@ -365,7 +386,7 @@ local function GetHearthCooldown()
     local cooldown, startTime, duration
 
     for _, item in pairs(scrolls) do
-        if GetItemCount(item) > 0 then
+        if GetItemCount(item) > 0 or PlayerHasToy(item) then
             startTime, duration = GetItemCooldown(item)
             cooldown = duration - (GetTime() - startTime)
             if cooldown >= 60 then
@@ -387,7 +408,7 @@ local function GetItemCooldowns()
     local cooldown, cooldowns
 
     for _, item in pairs(items) do
-        if GetItemCount(item) > 0 then
+        if GetItemCount(item) > 0 or PlayerHasToy(item) then
             startTime, duration = GetItemCooldown(item)
             cooldown = duration - (GetTime() - startTime)
             if cooldown >= 60 then
@@ -429,7 +450,7 @@ local function ShowHearthstone()
     if secure ~= nil then
         dewdrop:AddLine('text', text,
             'secure', secure,
-            'icon', icon,
+            'icon', tostring(icon),
             'func', function() UpdateIcon(icon) end,
             'closeWhenClicked', true)
         dewdrop:AddLine()
@@ -453,7 +474,7 @@ local function ShowOtherItems()
                 'textG', ITEM_QUALITY_COLORS[quality].g,
                 'textB', ITEM_QUALITY_COLORS[quality].b,
                 'secure', secure,
-                'icon', icon,
+                'icon', tostring(icon),
                 'func', function() UpdateIcon(icon) end,
                 'closeWhenClicked', true)
             i = i + 1
@@ -496,7 +517,7 @@ local function UpdateMenu(level, value)
                 dewdrop:AddLine(
                     'text', v.text,
                     'secure', v.secure,
-                    'icon', v.spellIcon,
+                    'icon', tostring(v.spellIcon),
                     'func', function()
                         UpdateIcon(v.spellIcon)
                         if announce and v.isPortal and chatType then
