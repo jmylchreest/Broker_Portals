@@ -216,25 +216,25 @@ local function hasItem(itemID)
             end
         end
     end
-	-- check Toybox
---	id, _, _, found = C_ToyBox.GetToyInfo(itemID)
---	if found and tonumber(id) == itemID then
---		if not C_ToyBox.IsToyUsable(itemID) then
---			return false
---		else
---			return true
---		end
---	end
-	if PlayerHasToy(itemID) and C_ToyBox.IsToyUsable(itemID) then
-		local startTime, duration, cooldown
-		startTime, duration = GetItemCooldown(itemID)
-		cooldown = duration - (GetTime() - startTime)
-		if cooldown ~= 0 then
-			return false
-		else
-			return true
-		end
-	end
+  -- check Toybox
+--  id, _, _, found = C_ToyBox.GetToyInfo(itemID)
+--  if found and tonumber(id) == itemID then
+--    if not C_ToyBox.IsToyUsable(itemID) then
+--      return false
+--    else
+--      return true
+--    end
+--  end
+  if PlayerHasToy(itemID) and C_ToyBox.IsToyUsable(itemID) then
+    local startTime, duration, cooldown
+    startTime, duration = GetItemCooldown(itemID)
+    cooldown = duration - (GetTime() - startTime)
+    if cooldown ~= 0 then
+      return false
+    else
+      return true
+    end
+  end
 
     return false
 end
@@ -404,19 +404,25 @@ local function GetHearthCooldown()
 end
 
 local function GetItemCooldowns()
-    local cooldown, cooldowns
+    local cooldown, cooldowns, hours, mins, secs
 
     for _, item in pairs(items) do
         if GetItemCount(item) > 0 or (PlayerHasToy(item) and C_ToyBox.IsToyUsable(item)) then
             startTime, duration = GetItemCooldown(item)
             cooldown = duration - (GetTime() - startTime)
-            if cooldown >= 60 then
-                cooldown = math_floor(cooldown / 60)
-                cooldown = cooldown .. ' ' .. L['MIN']
+            if cooldown >= 3600 then
+                hours = math_floor(cooldown / 3600)
+                mins = math_floor(cooldown / 60 - (hours * 60))
+                secs = math_floor(cooldown - hours * 3600 - mins *60)
+                cooldown = hours .. ':' .. L['HRS'] .. ' ' .. mins .. ':' .. L['MIN'] .. ' ' .. secs .. ':' .. L['SEC']
+            elseif cooldown >= 60 then
+                mins = math_floor(cooldown / 60)
+                secs = math_floor(cooldown - mins *60)
+                cooldown = mins .. ':' .. L['MIN'] .. ' ' .. secs .. ':' .. L['SEC']
             elseif cooldown <= 0 then
                 cooldown = L['READY']
             else
-                cooldown = math_floor(cooldown) .. ' ' .. L['SEC']
+                cooldown = math_floor(cooldown) .. ':' .. L['SEC']
             end
 
             if cooldowns == nil then
