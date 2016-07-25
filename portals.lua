@@ -21,6 +21,7 @@ local SendChatMessage = SendChatMessage
 local UnitInRaid = UnitInRaid
 local GetNumGroupMembers = GetNumGroupMembers
 local IsPlayerSpell = IsPlayerSpell
+local PlayerHasToy = PlayerHasToy
 
 local addonName, addonTable = ...
 local L = addonTable.L
@@ -224,19 +225,17 @@ local function hasItem(itemID)
 --			return true
 --		end
 --	end
-	if not PlayerHasToy(itemID) then
-		return false
-	else
+	if PlayerHasToy(itemID) and C_ToyBox.IsToyUsable(itemID) then
 		local startTime, duration, cooldown
 		startTime, duration = GetItemCooldown(itemID)
 		cooldown = duration - (GetTime() - startTime)
-		if not cooldown == 0 then
+		if cooldown ~= 0 then
 			return false
 		else
 			return true
-		end --if
-	end --if
-	
+		end
+	end
+
     return false
 end
 
@@ -386,7 +385,7 @@ local function GetHearthCooldown()
     local cooldown, startTime, duration
 
     for _, item in pairs(scrolls) do
-        if GetItemCount(item) > 0 or PlayerHasToy(item) then
+        if GetItemCount(item) > 0 or (PlayerHasToy(item) and C_ToyBox.IsToyUsable(item)) then
             startTime, duration = GetItemCooldown(item)
             cooldown = duration - (GetTime() - startTime)
             if cooldown >= 60 then
@@ -408,7 +407,7 @@ local function GetItemCooldowns()
     local cooldown, cooldowns
 
     for _, item in pairs(items) do
-        if GetItemCount(item) > 0 or PlayerHasToy(item) then
+        if GetItemCount(item) > 0 or (PlayerHasToy(item) and C_ToyBox.IsToyUsable(item)) then
             startTime, duration = GetItemCooldown(item)
             cooldown = duration - (GetTime() - startTime)
             if cooldown >= 60 then
