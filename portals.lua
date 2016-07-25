@@ -7,21 +7,23 @@ local _
 local math_floor = math.floor
 
 local CreateFrame = CreateFrame
+local C_ToyBox = C_ToyBox
+local GetBindLocation = GetBindLocation
 local GetContainerItemCooldown = GetContainerItemCooldown
 local GetContainerItemInfo = GetContainerItemInfo
 local GetContainerItemLink = GetContainerItemLink
 local GetContainerNumSlots = GetContainerNumSlots
-local GetBindLocation = GetBindLocation
 local GetInventoryItemCooldown = GetInventoryItemCooldown
 local GetInventoryItemLink = GetInventoryItemLink
+local GetNumGroupMembers = GetNumGroupMembers
+local GetSpellBookItemName = GetSpellBookItemName
 local GetSpellCooldown = GetSpellCooldown
 local GetSpellInfo = GetSpellInfo
-local GetSpellBookItemName = GetSpellBookItemName
-local SendChatMessage = SendChatMessage
-local UnitInRaid = UnitInRaid
-local GetNumGroupMembers = GetNumGroupMembers
+local GetTime = GetTime
 local IsPlayerSpell = IsPlayerSpell
 local PlayerHasToy = PlayerHasToy
+local SendChatMessage = SendChatMessage
+local UnitInRaid = UnitInRaid
 
 local addonName, addonTable = ...
 local L = addonTable.L
@@ -126,12 +128,11 @@ local challengeSpells = {
     { 131228, 'TRUE' }  -- Path of the Black Ox
 }
 
-obj = LibStub:GetLibrary('LibDataBroker-1.1'):NewDataObject(addonName, {
+local obj = LibStub:GetLibrary('LibDataBroker-1.1'):NewDataObject(addonName, {
     type = 'data source',
     text = L['P'],
     icon = 'Interface\\Icons\\INV_Misc_Rune_06',
 })
-local obj = obj
 local methods = {}
 local portals
 local frame = CreateFrame('frame')
@@ -216,25 +217,17 @@ local function hasItem(itemID)
             end
         end
     end
-  -- check Toybox
---  id, _, _, found = C_ToyBox.GetToyInfo(itemID)
---  if found and tonumber(id) == itemID then
---    if not C_ToyBox.IsToyUsable(itemID) then
---      return false
---    else
---      return true
---    end
---  end
-  if PlayerHasToy(itemID) and C_ToyBox.IsToyUsable(itemID) then
-    local startTime, duration, cooldown
-    startTime, duration = GetItemCooldown(itemID)
-    cooldown = duration - (GetTime() - startTime)
-    if cooldown ~= 0 then
-      return false
-    else
-      return true
+    -- check Toybox
+    if PlayerHasToy(itemID) and C_ToyBox.IsToyUsable(itemID) then
+        local startTime, duration, cooldown
+        startTime, duration = GetItemCooldown(itemID)
+        cooldown = duration - (GetTime() - startTime)
+        if cooldown ~= 0 then
+            return false
+        else
+            return true
+        end
     end
-  end
 
     return false
 end
@@ -503,8 +496,7 @@ end
 
 local function UpdateMenu(level, value)
     if level == 1 then
-        dewdrop:AddLine('text', 'Broker_Portals',
-            'isTitle', true)
+        dewdrop:AddLine('text', 'Broker_Portals', 'isTitle', true)
 
         methods = {}
         local spells = UpdateClassSpells()
