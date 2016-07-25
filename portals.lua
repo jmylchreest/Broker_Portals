@@ -423,7 +423,8 @@ local function GetItemCooldowns()
                 cooldowns = {}
             end
 
-            cooldowns[GetItemInfo(item)] = cooldown
+            local name = GetItemInfo(item) or select(2, C_ToyBox.GetToyInfo(item))
+            cooldowns[name] = cooldown
         end
     end
 
