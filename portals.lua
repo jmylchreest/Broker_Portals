@@ -4,7 +4,6 @@ local dewdrop = LibStub('Dewdrop-2.0', true)
 local icon = LibStub('LibDBIcon-1.0')
 
 local _
-local math_floor = math.floor
 
 local CreateFrame = CreateFrame
 local C_ToyBox = C_ToyBox
@@ -13,6 +12,7 @@ local GetContainerItemCooldown = GetContainerItemCooldown
 local GetContainerItemInfo = GetContainerItemInfo
 local GetContainerItemLink = GetContainerItemLink
 local GetContainerNumSlots = GetContainerNumSlots
+local GetItemCooldown = GetItemCooldown
 local GetInventoryItemCooldown = GetInventoryItemCooldown
 local GetInventoryItemLink = GetInventoryItemLink
 local GetNumGroupMembers = GetNumGroupMembers
@@ -22,6 +22,7 @@ local GetSpellInfo = GetSpellInfo
 local GetTime = GetTime
 local IsPlayerSpell = IsPlayerSpell
 local PlayerHasToy = PlayerHasToy
+local SecondsToTime = SecondsToTime
 local SendChatMessage = SendChatMessage
 local UnitInRaid = UnitInRaid
 
@@ -140,7 +141,6 @@ local frame = CreateFrame('frame')
 frame:SetScript('OnEvent', function(self, event, ...) if self[event] then return self[event](self, event, ...) end end)
 frame:RegisterEvent('PLAYER_LOGIN')
 frame:RegisterEvent('SKILL_LINES_CHANGED')
-
 
 local function pairsByKeys(t)
     local a = {}
@@ -326,7 +326,7 @@ local function SetupSpells()
         portals = {}
     end
 
-    spells = nil
+    wipe(spells)
 end
 
 local function GenerateLinks(spells)
@@ -374,22 +374,18 @@ local function UpdateIcon(icon)
     obj.icon = icon
 end
 
-local function GetHearthCooldown()
+local function GetScrollCooldown()
     local cooldown, startTime, duration
 
-    for _, item in pairs(scrolls) do
-        if GetItemCount(item) > 0 or (PlayerHasToy(item) and C_ToyBox.IsToyUsable(item)) then
-            startTime, duration = GetItemCooldown(item)
+    for i = 1, #scrolls do
+        if GetItemCount(scrolls[i]) > 0 or (PlayerHasToy(scrolls[i]) and C_ToyBox.IsToyUsable(scrolls[i])) then
+            startTime, duration = GetItemCooldown(scrolls[i])
             cooldown = duration - (GetTime() - startTime)
-            if cooldown >= 60 then
-                cooldown = math_floor(cooldown / 60)
-                cooldown = cooldown .. ' ' .. L['MIN']
-            elseif cooldown <= 0 then
-                cooldown = L['READY']
+            if cooldown == 0 then
+                return L['READY']
             else
-                cooldown = math_floor(cooldown) .. ' ' .. L['SEC']
+                return SecondsToTime(cooldown)
             end
-            return cooldown
         end
     end
 
@@ -399,30 +395,21 @@ end
 local function GetItemCooldowns()
     local cooldown, cooldowns, hours, mins, secs
 
-    for _, item in pairs(items) do
-        if GetItemCount(item) > 0 or (PlayerHasToy(item) and C_ToyBox.IsToyUsable(item)) then
-            startTime, duration = GetItemCooldown(item)
+    for i = 1, #items do
+        if GetItemCount(items[i]) > 0 or (PlayerHasToy(items[i]) and C_ToyBox.IsToyUsable(items[i])) then
+            startTime, duration = GetItemCooldown(items[i])
             cooldown = duration - (GetTime() - startTime)
-            if cooldown >= 3600 then
-                hours = math_floor(cooldown / 3600)
-                mins = math_floor(cooldown / 60 - (hours * 60))
-                secs = math_floor(cooldown - hours * 3600 - mins *60)
-                cooldown = hours .. ':' .. L['HRS'] .. ' ' .. mins .. ':' .. L['MIN'] .. ' ' .. secs .. ':' .. L['SEC']
-            elseif cooldown >= 60 then
-                mins = math_floor(cooldown / 60)
-                secs = math_floor(cooldown - mins *60)
-                cooldown = mins .. ':' .. L['MIN'] .. ' ' .. secs .. ':' .. L['SEC']
-            elseif cooldown <= 0 then
+            if cooldown == 0 then
                 cooldown = L['READY']
             else
-                cooldown = math_floor(cooldown) .. ':' .. L['SEC']
+                cooldown = SecondsToTime(cooldown)
             end
 
             if cooldowns == nil then
                 cooldowns = {}
             end
 
-            local name = GetItemInfo(item) or select(2, C_ToyBox.GetToyInfo(item))
+            local name = GetItemInfo(items[i]) or select(2, C_ToyBox.GetToyInfo(items[i]))
             cooldowns[name] = cooldown
         end
     end
@@ -434,9 +421,9 @@ local function ShowHearthstone()
     local bindLoc = GetBindLocation()
     local secure, text, icon, name
 
-    for _, itemID in ipairs(scrolls) do
-        if hasItem(itemID) then
-            name, _, _, _, _, _, _, _, _, icon = GetItemInfo(itemID)
+    for i = 1, #scrolls do
+        if hasItem(scrolls[i]) then
+            name, _, _, _, _, _, _, _, _, icon = GetItemInfo(scrolls[i])
             text = L['INN'] .. ' ' .. bindLoc
             secure = {
                 type = 'item',
@@ -459,9 +446,9 @@ end
 local function ShowOtherItems()
     local i = 0
 
-    for _, itemID in ipairs(items) do
-        if hasItem(itemID) then
-            local name, _, quality, _, _, _, _, _, _, icon = GetItemInfo(itemID)
+    for i = 1, #items do
+        if hasItem(items[i]) then
+            local name, _, quality, _, _, _, _, _, _, icon = GetItemInfo(items[i])
             local secure = {
                 type = 'item',
                 item = name
@@ -629,14 +616,24 @@ function obj.OnEnter(self)
     GameTooltip:AddLine('Broker Portals')
     GameTooltip:AddDoubleLine(L['RCLICK'], L['SEE_SPELLS'], 0.9, 0.6, 0.2, 0.2, 1, 0.2)
     GameTooltip:AddLine(' ')
-    GameTooltip:AddDoubleLine(L['HEARTHSTONE'] .. ': ' .. GetBindLocation(), GetHearthCooldown(), 0.9, 0.6, 0.2, 0.2, 1, 0.2)
+
+    local scrollCooldown = GetScrollCooldown()
+    if scrollCooldown == L['READY'] then
+        GameTooltip:AddDoubleLine(L['HEARTHSTONE'] .. ': ' .. GetBindLocation(), scrollCooldown, 0.9, 0.6, 0.2, 0.2, 1, 0.2)
+    else
+       GameTooltip:AddDoubleLine(L['HEARTHSTONE'] .. ': ' .. GetBindLocation(), scrollCooldown, 0.9, 0.6, 0.2, 1, 1, 0.2)
+    end
 
     if PortalsDB.showItemCooldowns then
         local cooldowns = GetItemCooldowns()
         if cooldowns ~= nil then
             GameTooltip:AddLine(' ')
             for name, cooldown in pairs(cooldowns) do
-                GameTooltip:AddDoubleLine(name, cooldown, 0.9, 0.6, 0.2, 0.2, 1, 0.2)
+                if cooldown == L['READY'] then
+                    GameTooltip:AddDoubleLine(name, cooldown, 0.9, 0.6, 0.2, 0.2, 1, 0.2)
+		            else
+                    GameTooltip:AddDoubleLine(name, cooldown, 0.9, 0.6, 0.2, 1, 1, 0.2)
+				        end
             end
         end
     end
