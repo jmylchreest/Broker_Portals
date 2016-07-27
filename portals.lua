@@ -126,7 +126,15 @@ local challengeSpells = {
     { 131231, 'TRUE' }, -- Path of the Scarlet Blade
     { 131229, 'TRUE' }, -- Path of the Scarlet Mitre
     { 131232, 'TRUE' }, -- Path of the Necromancer
-    { 131228, 'TRUE' }  -- Path of the Black Ox
+    { 131228, 'TRUE' }, -- Path of the Black Ox
+    { 159895, 'TRUE' }, -- Path of the Bloodmaul
+    { 159896, 'TRUE' }, -- Path of the Iron Prow
+    { 159897, 'TRUE' }, -- Path of the Vigilant
+    { 159898, 'TRUE' }, -- Path of the Skies
+    { 159899, 'TRUE' }, -- Path of the Crescent Moon
+    { 159900, 'TRUE' }, -- Path of the Dark Rail    
+    { 159901, 'TRUE' }, -- Path of the Verdant
+    { 159902, 'TRUE' }  -- Path of the Burning Mountain
 }
 
 local obj = LibStub:GetLibrary('LibDataBroker-1.1'):NewDataObject(addonName, {

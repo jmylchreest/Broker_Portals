@@ -1,5 +1,7 @@
 1.8.46:
   - update: tweak item cooldown display
+  - update: added 7.0 challenge spells
+  - update: fixes for toys
 
 1.8.45:
   - update: more fixes for 7.0.3
