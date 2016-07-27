@@ -103,7 +103,8 @@ local items = {
     118907, -- Pit Fighter's Punching Ring
     128353, -- Admiral's Compass
     128502, -- Hunter's Seeking Crystal
-    128503  -- Master Hunter's Seeking Crystal
+    128503, -- Master Hunter's Seeking Crystal
+    136849	-- Nature's Beacon
 }
 
 -- IDs of items usable instead of hearthstone

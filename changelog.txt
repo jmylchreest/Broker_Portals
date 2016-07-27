@@ -1,3 +1,6 @@
+1.8.47:
+  - update: added Nature's Beacon
+
 1.8.46:
   - update: tweak item cooldown display
   - update: added 7.0 challenge spells
