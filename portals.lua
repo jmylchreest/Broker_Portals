@@ -132,7 +132,7 @@ local challengeSpells = {
     { 159897, 'TRUE' }, -- Path of the Vigilant
     { 159898, 'TRUE' }, -- Path of the Skies
     { 159899, 'TRUE' }, -- Path of the Crescent Moon
-    { 159900, 'TRUE' }, -- Path of the Dark Rail    
+    { 159900, 'TRUE' }, -- Path of the Dark Rail
     { 159901, 'TRUE' }, -- Path of the Verdant
     { 159902, 'TRUE' }  -- Path of the Burning Mountain
 }
@@ -230,7 +230,7 @@ local function hasItem(itemID)
         local startTime, duration, cooldown
         startTime, duration = GetItemCooldown(itemID)
         cooldown = duration - (GetTime() - startTime)
-        if cooldown ~= 0 then
+        if cooldown > 0 then
             return false
         else
             return true
@@ -271,6 +271,7 @@ local function SetupSpells()
             { 132621, 'TP_RUNE' }, -- TP:Vale of Eternal Blossoms
             { 120145, 'TP_RUNE' }, -- TP:Ancient Dalaran
             { 176248, 'TP_RUNE' }, -- TP:StormShield
+            { 224869, 'TP_RUNE' }, -- TP:Dalaran - Broken Isles
             { 10059, 'P_RUNE' },   -- P:Stormwind
             { 11416, 'P_RUNE' },   -- P:Ironforge
             { 11419, 'P_RUNE' },   -- P:Darnassus
@@ -281,7 +282,8 @@ local function SetupSpells()
             { 88345, 'P_RUNE' },   -- P:Tol Barad
             { 120146, 'P_RUNE' },  -- P:Ancient Dalaran
             { 132620, 'P_RUNE' },  -- P:Vale of Eternal Blossoms
-            { 176246, 'P_RUNE' }   -- P:StormShield
+            { 176246, 'P_RUNE' },  -- P:StormShield
+            { 224871, 'P_RUNE' }   -- P:Dalaran - Broken Isles
         },
         Horde = {
             { 3563, 'TP_RUNE' },   -- TP:Undercity
@@ -295,6 +297,7 @@ local function SetupSpells()
             { 132627, 'TP_RUNE' }, -- TP:Vale of Eternal Blossoms
             { 120145, 'TP_RUNE' }, -- TP:Ancient Dalaran
             { 176242, 'TP_RUNE' }, -- TP:Warspear
+            { 224869, 'TP_RUNE' }, -- TP:Dalaran - Broken Isles
             { 11418, 'P_RUNE' },   -- P:Undercity
             { 11420, 'P_RUNE' },   -- P:Thunder Bluff
             { 11417, 'P_RUNE' },   -- P:Orgrimmar
@@ -305,7 +308,8 @@ local function SetupSpells()
             { 88346, 'P_RUNE' },   -- P:Tol Barad
             { 120146, 'P_RUNE' },  -- P:Ancient Dalaran
             { 132626, 'P_RUNE' },  -- P:Vale of Eternal Blossoms
-            { 176244, 'P_RUNE' }   -- P:Warspear
+            { 176244, 'P_RUNE' },  -- P:Warspear
+            { 224871, 'P_RUNE' }   -- P:Dalaran - Broken Isles
         }
     }
 
@@ -389,7 +393,7 @@ local function GetScrollCooldown()
         if GetItemCount(scrolls[i]) > 0 or (PlayerHasToy(scrolls[i]) and C_ToyBox.IsToyUsable(scrolls[i])) then
             startTime, duration = GetItemCooldown(scrolls[i])
             cooldown = duration - (GetTime() - startTime)
-            if cooldown == 0 then
+            if cooldown <= 0 then
                 return L['READY']
             else
                 return SecondsToTime(cooldown)
@@ -407,7 +411,7 @@ local function GetItemCooldowns()
         if GetItemCount(items[i]) > 0 or (PlayerHasToy(items[i]) and C_ToyBox.IsToyUsable(items[i])) then
             startTime, duration = GetItemCooldown(items[i])
             cooldown = duration - (GetTime() - startTime)
-            if cooldown == 0 then
+            if cooldown <= 0 then
                 cooldown = L['READY']
             else
                 cooldown = SecondsToTime(cooldown)
@@ -639,9 +643,9 @@ function obj.OnEnter(self)
             for name, cooldown in pairs(cooldowns) do
                 if cooldown == L['READY'] then
                     GameTooltip:AddDoubleLine(name, cooldown, 0.9, 0.6, 0.2, 0.2, 1, 0.2)
-		            else
+                else
                     GameTooltip:AddDoubleLine(name, cooldown, 0.9, 0.6, 0.2, 1, 1, 0.2)
-				        end
+                end
             end
         end
     end
