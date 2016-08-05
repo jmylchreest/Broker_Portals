@@ -104,7 +104,7 @@ local items = {
     128353, -- Admiral's Compass
     128502, -- Hunter's Seeking Crystal
     128503, -- Master Hunter's Seeking Crystal
-    136849	-- Nature's Beacon
+    136849  -- Nature's Beacon
 }
 
 -- IDs of items usable instead of hearthstone
@@ -409,7 +409,7 @@ local function GetItemCooldowns()
     local cooldown, cooldowns, hours, mins, secs
 
     for i = 1, #items do
-        if GetItemCount(items[i]) > 0 or (PlayerHasToy(items[i]) and C_ToyBox.IsToyUsable(items[i])) then
+        if hasItem(items[i]) then
             startTime, duration = GetItemCooldown(items[i])
             cooldown = duration - (GetTime() - startTime)
             if cooldown <= 0 then
