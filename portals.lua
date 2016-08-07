@@ -409,7 +409,7 @@ local function GetItemCooldowns()
     local cooldown, cooldowns, hours, mins, secs
 
     for i = 1, #items do
-        if hasItem(items[i]) then
+        if GetItemCount(items[i]) > 0 or (PlayerHasToy(items[i]) and C_ToyBox.IsToyUsable(items[i])) then
             startTime, duration = GetItemCooldown(items[i])
             cooldown = duration - (GetTime() - startTime)
             if cooldown <= 0 then
