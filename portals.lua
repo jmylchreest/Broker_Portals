@@ -48,6 +48,7 @@ local items = {
     51558,  -- Runed Loop of the Kirin Tor
     51559,  -- Runed Ring of the Kirin Tor
     51557,  -- Runed Signet of the Kirin Tor
+    139599, -- Empowered Ring of the Kirin Tor
     -- Engineering Gadgets
     30542,  -- Dimensional Ripper - Area 52
     18984,  -- Dimensional Ripper - Everlook
@@ -105,7 +106,7 @@ local items = {
     128502, -- Hunter's Seeking Crystal
     128503, -- Master Hunter's Seeking Crystal
     136849, -- Nature's Beacon
-    193759  -- Dalaran Hearthstone
+    140192  -- Dalaran Hearthstone
 }
 
 -- IDs of items usable instead of hearthstone
@@ -301,6 +302,7 @@ local function SetupSpells()
             { 120145, 'TP_RUNE' }, -- TP:Ancient Dalaran
             { 176242, 'TP_RUNE' }, -- TP:Warspear
             { 224869, 'TP_RUNE' }, -- TP:Dalaran - Broken Isles
+            { 193759, 'TP_RUNE' }, -- TP:Hall of the Guardian
             { 11418, 'P_RUNE' },   -- P:Undercity
             { 11420, 'P_RUNE' },   -- P:Thunder Bluff
             { 11417, 'P_RUNE' },   -- P:Orgrimmar
@@ -326,7 +328,8 @@ local function SetupSpells()
     elseif class == 'DRUID' then
         portals = {
             { 18960,  'TRUE' }, -- TP:Moonglade
-            { 147420, 'TRUE' }  -- TP:One with Nature
+            { 147420, 'TRUE' }, -- TP:One with Nature
+            { 193753, 'TRUE' }  -- TP:Dreamwalk
         }
     elseif class == 'SHAMAN' then
         portals = {

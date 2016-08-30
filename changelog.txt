@@ -1,5 +1,5 @@
 1.8.49:
-  - update: added Dalaran Hearthstone and Teleport: Hall of Guardian
+  - update: added some Legion spells and items
 
 1.8.48:
   - update: fix error in item cooldowns
