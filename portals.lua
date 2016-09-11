@@ -106,7 +106,8 @@ local items = {
     128502, -- Hunter's Seeking Crystal
     128503, -- Master Hunter's Seeking Crystal
     136849, -- Nature's Beacon
-    140192  -- Dalaran Hearthstone
+    140192, -- Dalaran Hearthstone
+    141605  -- Flight Master's Whistle
 }
 
 -- IDs of items usable instead of hearthstone

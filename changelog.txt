@@ -1,3 +1,6 @@
+1.8.50:
+  - update: added Flight Master's Whistle
+
 1.8.49:
   - update: added some Legion spells and items
 
