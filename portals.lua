@@ -107,7 +107,8 @@ local items = {
     128503, -- Master Hunter's Seeking Crystal
     136849, -- Nature's Beacon
     140192, -- Dalaran Hearthstone
-    141605  -- Flight Master's Whistle
+    141605, -- Flight Master's Whistle
+    140324  -- Mobile Telemancy Beacon
 }
 
 -- IDs of items usable instead of hearthstone
@@ -540,28 +541,34 @@ local function UpdateMenu(level, value)
             ShowOtherItems()
         end
 
-        dewdrop:AddLine('text', L['OPTIONS'],
+        dewdrop:AddLine(
+            'text', L['OPTIONS'],
             'hasArrow', true,
             'value', 'options')
 
-        dewdrop:AddLine('text', CLOSE,
+        dewdrop:AddLine(
+            'text', CLOSE,
             'tooltipTitle', CLOSE,
             'tooltipText', CLOSE_DESC,
             'closeWhenClicked', true)
     elseif level == 2 and value == 'options' then
-        dewdrop:AddLine('text', L['SHOW_ITEMS'],
+        dewdrop:AddLine(
+            'text', L['SHOW_ITEMS'],
             'checked', PortalsDB.showItems,
             'func', function() PortalsDB.showItems = not PortalsDB.showItems end,
             'closeWhenClicked', true)
-        dewdrop:AddLine('text', L['SHOW_ITEM_COOLDOWNS'],
+        dewdrop:AddLine(
+            'text', L['SHOW_ITEM_COOLDOWNS'],
             'checked', PortalsDB.showItemCooldowns,
             'func', function() PortalsDB.showItemCooldowns = not PortalsDB.showItemCooldowns end,
             'closeWhenClicked', true)
-        dewdrop:AddLine('text', L['ATT_MINIMAP'],
+        dewdrop:AddLine(
+            'text', L['ATT_MINIMAP'],
             'checked', not PortalsDB.minimap.hide,
             'func', function() ToggleMinimap() end,
             'closeWhenClicked', true)
-        dewdrop:AddLine('text', L['ANNOUNCE'],
+        dewdrop:AddLine(
+            'text', L['ANNOUNCE'],
             'checked', PortalsDB.announce,
             'func', function() PortalsDB.announce = not PortalsDB.announce end,
             'closeWhenClicked', true)
