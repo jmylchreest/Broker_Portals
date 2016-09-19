@@ -25,6 +25,7 @@ local PlayerHasToy = PlayerHasToy
 local SecondsToTime = SecondsToTime
 local SendChatMessage = SendChatMessage
 local UnitInRaid = UnitInRaid
+local UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT = UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT
 
 local addonName, addonTable = ...
 local L = addonTable.L
@@ -430,7 +431,10 @@ local function GetItemCooldowns()
             end
 
             local name = GetItemInfo(items[i]) or select(2, C_ToyBox.GetToyInfo(items[i]))
-            cooldowns[name] = cooldown
+
+            if name then
+                cooldowns[name] = cooldown
+            end
         end
     end
 
@@ -454,7 +458,9 @@ local function ShowHearthstone()
     end
 
     if secure ~= nil then
-        dewdrop:AddLine('text', text,
+        dewdrop:AddLine(
+            'textHeight', PortalsDB.fontSize,
+            'text', text,
             'secure', secure,
             'icon', tostring(icon),
             'func', function() UpdateIcon(icon) end,
@@ -475,6 +481,7 @@ local function ShowOtherItems()
             }
 
             dewdrop:AddLine(
+                'textHeight', PortalsDB.fontSize,
                 'text', name,
                 'textR', ITEM_QUALITY_COLORS[quality].r,
                 'textG', ITEM_QUALITY_COLORS[quality].g,
@@ -520,6 +527,7 @@ local function UpdateMenu(level, value)
         for k, v in pairsByKeys(methods) do
             if v.secure and GetSpellCooldown(v.text) == 0 then
                 dewdrop:AddLine(
+                    'textHeight', PortalsDB.fontSize,
                     'text', v.text,
                     'secure', v.secure,
                     'icon', tostring(v.spellIcon),
@@ -542,36 +550,55 @@ local function UpdateMenu(level, value)
         end
 
         dewdrop:AddLine(
+            'textHeight', PortalsDB.fontSize,
             'text', L['OPTIONS'],
             'hasArrow', true,
             'value', 'options')
 
         dewdrop:AddLine(
+            'textHeight', PortalsDB.fontSize,
             'text', CLOSE,
             'tooltipTitle', CLOSE,
             'tooltipText', CLOSE_DESC,
             'closeWhenClicked', true)
     elseif level == 2 and value == 'options' then
         dewdrop:AddLine(
+            'textHeight', PortalsDB.fontSize,
             'text', L['SHOW_ITEMS'],
             'checked', PortalsDB.showItems,
             'func', function() PortalsDB.showItems = not PortalsDB.showItems end,
             'closeWhenClicked', true)
         dewdrop:AddLine(
+            'textHeight', PortalsDB.fontSize,
             'text', L['SHOW_ITEM_COOLDOWNS'],
             'checked', PortalsDB.showItemCooldowns,
             'func', function() PortalsDB.showItemCooldowns = not PortalsDB.showItemCooldowns end,
             'closeWhenClicked', true)
         dewdrop:AddLine(
+            'textHeight', PortalsDB.fontSize,
             'text', L['ATT_MINIMAP'],
             'checked', not PortalsDB.minimap.hide,
             'func', function() ToggleMinimap() end,
             'closeWhenClicked', true)
         dewdrop:AddLine(
+            'textHeight', PortalsDB.fontSize,
             'text', L['ANNOUNCE'],
             'checked', PortalsDB.announce,
             'func', function() PortalsDB.announce = not PortalsDB.announce end,
             'closeWhenClicked', true)
+        dewdrop:AddLine(
+            'textHeight', PortalsDB.fontSize,
+            'text', L['DROPDOWN_FONT_SIZE'],
+            'hasArrow', true,
+            'hasEditBox', true,
+            'editBoxText', PortalsDB.fontSize,
+						'editBoxFunc', function(value)
+                       if value ~= '' and tonumber(value) ~= nil then
+                           PortalsDB.fontSize = tonumber(value)
+                       else
+                           PortalsDB.fontSize = UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT
+                       end
+                   end)
     end
 end
 
@@ -584,11 +611,15 @@ function frame:PLAYER_LOGIN()
         PortalsDB.showItems = true
         PortalsDB.showItemCooldowns = true
         PortalsDB.announce = false
-        PortalsDB.version = 4
+        PortalsDB.fontSize = UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT
+        PortalsDB.version = 5
     end
 
     -- upgrade from versions
-    if PortalsDB.version == 3 then
+    if PortalsDB.version == 4 then
+        PortalsDB.fontSize = UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT
+        PortalsDB.version = 5
+    elseif PortalsDB.version == 3 then
         PortalsDB.announce = false
         PortalsDB.version = 4
     elseif PortalsDB.version == 2 then
