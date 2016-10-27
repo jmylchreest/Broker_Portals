@@ -1,3 +1,6 @@
+1.9.1:
+  - update: updated for 7.1
+
 1.9.0:
   - feature: make font size configurable
 
