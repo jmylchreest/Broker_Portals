@@ -107,9 +107,11 @@ local items = {
     128502, -- Hunter's Seeking Crystal
     128503, -- Master Hunter's Seeking Crystal
     136849, -- Nature's Beacon
+    139590, -- Scroll of Teleport: Ravenholdt
     140192, -- Dalaran Hearthstone
     141605, -- Flight Master's Whistle
-    140324  -- Mobile Telemancy Beacon
+    140324, -- Mobile Telemancy Beacon
+    142542  -- Tome of Town Portal
 }
 
 -- IDs of items usable instead of hearthstone
