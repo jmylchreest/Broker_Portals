@@ -24,7 +24,9 @@ local IsPlayerSpell = IsPlayerSpell
 local PlayerHasToy = PlayerHasToy
 local SecondsToTime = SecondsToTime
 local SendChatMessage = SendChatMessage
+local UnitClass = UnitClass
 local UnitInRaid = UnitInRaid
+local UnitRace = UnitRace
 local UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT = UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT
 
 local addonName, addonTable = ...
@@ -359,6 +361,11 @@ local function SetupSpells()
         }
     else
         portals = {}
+    end
+
+    local _, race = UnitRace('player')
+    if race == 'DarkIronDwarf' then
+        table.insert(portals, { 265225, 'TRUE' }) -- Mole Machine
     end
 
     wipe(spells)
