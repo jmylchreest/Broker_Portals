@@ -1,3 +1,8 @@
+1.10.2:
+  - update: updated for 8.1
+  - update: added bunch of missing items
+  - update: move Hearthstone alternatives to other teleport items (thank you Khormin!)
+
 1.10.1:
   - update: added DarkIron Dwarf Mole Machine (thank you DaBear78!)
 
