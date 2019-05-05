@@ -1,3 +1,6 @@
+1.10.3:
+  - update: added Noble Gardener's Hearthstone
+
 1.10.2:
   - update: updated for 8.1
   - update: added bunch of missing items
