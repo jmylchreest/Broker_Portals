@@ -1,3 +1,6 @@
+1.10.4:
+  - update: added Captain's Signet of Command
+
 1.10.3:
   - update: added Noble Gardener's Hearthstone
 

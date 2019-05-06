@@ -119,7 +119,7 @@ local items = {
     144392, -- Pugilist's Powerful Punching Ring (Horde)
     151016, -- Fractured Necrolyte Skull
     166559, -- Commander's Signet of Battle
-    165802, -- Noble Gardener's Hearthstone
+    166560, -- Captain's Signet of Command
     -- items usable instead of hearthstone
     28585,  -- Ruby Slippers
     37118,  -- Scroll of Recall
@@ -131,7 +131,8 @@ local items = {
     162973, -- Greatfather Winter's Hearthstone
     163045, -- Headless Horseman's Hearthstone
     165669, -- Lunar Elder's Hearthstone
-  	165670  -- Peddlefeet's Lovely Hearthstone
+  	165670, -- Peddlefeet's Lovely Hearthstone
+    165802  -- Noble Gardener's Hearthstone
 }
 
 local scrolls = {
