@@ -4,6 +4,7 @@ local dewdrop = LibStub('Dewdrop-2.0', true)
 local icon = LibStub('LibDBIcon-1.0')
 
 local _
+local IS_RETAIL = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 
 local CreateFrame = CreateFrame
 local C_ToyBox = C_ToyBox
@@ -250,17 +251,20 @@ local function hasItem(itemID)
             end
         end
     end
-    -- check Toybox
-    if PlayerHasToy(itemID) and C_ToyBox.IsToyUsable(itemID) then
-        local startTime, duration, cooldown
-        startTime, duration = GetItemCooldown(itemID)
-        cooldown = duration - (GetTime() - startTime)
-        if cooldown > 0 then
-            return false
-        else
-            return true
-        end
-    end
+
+	if IS_RETAIL then
+		-- check Toybox
+		if PlayerHasToy(itemID) and C_ToyBox.IsToyUsable(itemID) then
+			local startTime, duration, cooldown
+			startTime, duration = GetItemCooldown(itemID)
+			cooldown = duration - (GetTime() - startTime)
+			if cooldown > 0 then
+				return false
+			else
+				return true
+			end
+		end
+	end
 
     return false
 end
@@ -427,7 +431,7 @@ local function GetScrollCooldown()
     local cooldown, startTime, duration
 
     for i = 1, #scrolls do
-        if GetItemCount(scrolls[i]) > 0 or (PlayerHasToy(scrolls[i]) and C_ToyBox.IsToyUsable(scrolls[i])) then
+        if GetItemCount(scrolls[i]) > 0 or (IS_RETAIL and PlayerHasToy(scrolls[i]) and C_ToyBox.IsToyUsable(scrolls[i])) then
             startTime, duration = GetItemCooldown(scrolls[i])
             cooldown = duration - (GetTime() - startTime)
             if cooldown <= 0 then
@@ -459,7 +463,7 @@ local function GetItemCooldowns()
     local cooldown, cooldowns, hours, mins, secs
 
     for i = 1, #items do
-        if GetItemCount(items[i]) > 0 or (PlayerHasToy(items[i]) and C_ToyBox.IsToyUsable(items[i])) then
+        if GetItemCount(items[i]) > 0 or (IS_RETAIL and PlayerHasToy(items[i]) and C_ToyBox.IsToyUsable(items[i])) then
             startTime, duration = GetItemCooldown(items[i])
             cooldown = duration - (GetTime() - startTime)
             if cooldown <= 0 then
