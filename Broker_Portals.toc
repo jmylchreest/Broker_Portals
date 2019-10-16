@@ -1,10 +1,9 @@
-## Interface: 80100
+## Interface: 11302
 ## Title: Broker - |cffffffffPortals|r
 ## Notes: Provides access to all Portal and Teleport spells on right click of one button.
 ## Author: CrazyBenny of Stormrage-EU
-## X-Email: s_m AT centrum DOT cz
-## LastUpdate: @project-date-iso@
-## Version: @project-version@
+## Contributor: Modified by Blazeflack of Tukui
+## Version: 1.10.4-classic
 ## OptionalDeps: LibDBIcon-1.0
 
 ## SavedVariables: PortalsDB

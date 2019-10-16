@@ -1,3 +1,6 @@
+1.10.4-classic:
+  - update: Added IS_RETAIL checks for code that will error on classic
+
 1.10.4:
   - update: added Captain's Signet of Command
 
