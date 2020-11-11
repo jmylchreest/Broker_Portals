@@ -1,11 +1,9 @@
-1.10.4-classic:
-  - update: Added IS_RETAIL checks for code that will error on classic
+1.11.1:
+  - update: added Noble Gardener's Hearthstone and G.E.A.R. Tracking Beacon
 
-1.10.4:
-  - update: added Captain's Signet of Command
-
-1.10.3:
-  - update: added Noble Gardener's Hearthstone
+1.11.0:
+  - update: updated for 8.3 (thank you dabear78!)
+  - update: added bunch of missing items
 
 1.10.2:
   - update: updated for 8.1

@@ -1,24 +1,80 @@
+local addonName, addonTable = ...
+
 --[[
+Name: LibDewdrop-3.0
+Description: A library to provide a clean dropdown menu interface.
+]]
+
+--[[ ORIGINAL ACE2 BASED LIBRAY
 Name: Dewdrop-2.0
-Revision: $Rev: 326 $
 Author(s): ckknight (ckknight@gmail.com)
 Website: http://ckknight.wowinterface.com/
 Documentation: http://wiki.wowace.com/index.php/Dewdrop-2.0
 SVN: http://svn.wowace.com/root/trunk/DewdropLib/Dewdrop-2.0
-Description: A library to provide a clean dropdown menu interface.
 Dependencies: AceLibrary
 License: LGPL v2.1
 ]]
 
-local MAJOR_VERSION = "Dewdrop-2.0"
-local MINOR_VERSION = tonumber(strmatch("$Revision: 326 $", "%d+")) + 90000
+local Dewdrop = LibStub:NewLibrary( "LibDewdrop-3.0", 1 )
 
-if not AceLibrary then error(MAJOR_VERSION .. " requires AceLibrary") end
-if not AceLibrary:IsNewVersion(MAJOR_VERSION, MINOR_VERSION) then return end
+if not Dewdrop then
+	return -- already loaded and no upgrade necessary
+end
 
-local Dewdrop = {}
+local function new( ... )
+	local t = { }
+	for i = 1, select( '#', ... ), 2 do
+		local k = select( i, ... )
+		if k then
+			t[k] = select( i + 1, ... )
+		else
+			break
+		end
+	end
+	return t
+end
 
-local SharedMedia
+local tmp
+do
+	local t = { }
+	function tmp( ... )
+		for k in pairs( t ) do
+			t[k] = nil
+		end
+		for i = 1, select( '#', ... ), 2 do
+			local k = select( i, ... )
+			if k then
+				t[k] = select( i + 1, ... )
+			else
+				break
+			end
+		end
+		return t
+	end
+end
+
+local tmp2
+do
+	local t = { }
+	function tmp2( ... )
+		for k in pairs( t ) do
+			t[k] = nil
+		end
+		for i = 1, select( '#', ... ), 2 do
+			local k = select( i, ... )
+			if k then
+				t[k] = select( i + 1, ... )
+			else
+				break
+			end
+		end
+		return t
+	end
+end
+
+
+local TOC = select( 4, GetBuildInfo( ) ) or 0
+
 
 local CLOSE = "Close"
 local CLOSE_DESC = "Close the menu."
@@ -113,67 +169,17 @@ end
 Dewdrop.KEY_BUTTON1 = KEY_BUTTON1
 Dewdrop.KEY_BUTTON2 = KEY_BUTTON2
 
-local function new(...)
-	local t = {}
-	for i = 1, select('#', ...), 2 do
-		local k = select(i, ...)
-		if k then
-			t[k] = select(i+1, ...)
-		else
-			break
-		end
-	end
-	return t
-end
-
-local tmp
-do
-	local t = {}
-	function tmp(...)
-		for k in pairs(t) do
-			t[k] = nil
-		end
-		for i = 1, select('#', ...), 2 do
-			local k = select(i, ...)
-			if k then
-				t[k] = select(i+1, ...)
-			else
-				break
-			end
-		end
-		return t
-	end
-end
-local tmp2
-do
-	local t = {}
-	function tmp2(...)
-		for k in pairs(t) do
-			t[k] = nil
-		end
-		for i = 1, select('#', ...), 2 do
-			local k = select(i, ...)
-			if k then
-				t[k] = select(i+1, ...)
-			else
-				break
-			end
-		end
-		return t
-	end
-end
 local levels
 local buttons
-
+local options
 
 -- Secure frame handling:
 -- Rather than using secure buttons in the menu (has problems), we have one
 -- master secureframe that we pop onto menu items on mouseover. This requires
 -- some dark magic with OnLeave etc, but it's not too bad.
 
-local eventFrame = CreateFrame("Button")
-local secureFrame
-local createSecureFrame
+local secureFrame = CreateFrame("Button", nil, nil, "SecureActionButtonTemplate")
+secureFrame:Hide()
 
 local function secureFrame_Show(self)
   local owner = self.owner
@@ -210,43 +216,18 @@ local function secureFrame_Hide(self)
   self.secure = nil
 end
 
-eventFrame:SetScript("OnEvent",
-	function(this, event)
-		if event=="PLAYER_REGEN_ENABLED" then
-			createSecureFrame()
-			secureFrame.combat = false
-			if not secureFrame:IsShown() and secureFrame.owner then
-				secureFrame_Show(secureFrame)
-			end
-		elseif event=="PLAYER_REGEN_DISABLED" and secureFrame then
-			secureFrame.combat = true
-			if secureFrame:IsShown() then
-				secureFrame_Hide(secureFrame)
-			end
-		end
-	end
-)
-eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
-eventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
-
-function createSecureFrame()
-  if secureFrame or InCombatLockdown() then return end
-  secureFrame = CreateFrame("Button", nil, nil, "SecureActionButtonTemplate")
-  secureFrame:Hide()
-
 secureFrame:SetScript("OnLeave",
-	function(this)
-		local owner=this.owner
-		this:Deactivate()
-		owner:GetScript("OnLeave")(owner)
+	function(self)
+		local owner=self.owner
+		self:Deactivate()
+		owner:GetScript("OnLeave")
 	end
 )
 
 secureFrame:HookScript("OnClick",
-	function(this)
-		local realthis = this
-		this = this.owner
-		this:GetScript("OnClick")(this)
+	function(self,...)
+		if not self.owner then return end
+		self.owner:GetScript("OnClick")(self.owner,...)
 	end
 )
 
@@ -256,40 +237,43 @@ end
 
 function secureFrame:Activate(owner)
 	if self.owner then		-- "Shouldn't" happen but apparently it does and I cba to troubleshoot...
-		if not self.combat then
+		if not InCombatLockdown( ) then
 			secureFrame_Hide(self)
 		end
 	end
 	self.owner = owner
-	if not self.combat then
+	if not InCombatLockdown( ) then
 		secureFrame_Show(self)
 	end
 end
 
 function secureFrame:Deactivate()
-	if not self.combat then
+	if not InCombatLockdown( ) then
 		secureFrame_Hide(self)
 	end
 	self.owner = nil
 end
 
-end
-createSecureFrame()
 -- END secure frame utilities
 
 
 -- Underline on mouseover - use a single global underline that we move around, no point in creating lots of copies
-local underlineFrame = CreateFrame("Frame", nil)
-underlineFrame.tx = underlineFrame:CreateTexture()
-underlineFrame.tx:SetTexture(1,1,0.5,0.75)
-underlineFrame:SetScript("OnHide", function(this) this:Hide(); end)
-underlineFrame:SetScript("OnShow", function(this) 	-- change sizing on the fly to catch runtime uiscale changes
-    underlineFrame.tx:SetPoint("TOPLEFT", -1, -2/this:GetEffectiveScale())
-    underlineFrame.tx:SetPoint("RIGHT", 1,0)
-    underlineFrame.tx:SetHeight(0.6 / this:GetEffectiveScale());
-end)
-underlineFrame:SetHeight(1)
-
+local underlineFrame = CreateFrame( "Frame", nil, UIParent, BackdropTemplateMixin and "BackdropTemplate");
+underlineFrame.tx = underlineFrame:CreateTexture( )
+underlineFrame.tx:SetTexture( 1, 1, 0.5, 0.75 )
+underlineFrame:SetScript( "OnHide",
+	function( self )
+		self:Hide( )
+	end
+)
+underlineFrame:SetScript( "OnShow",
+	function( self ) -- change sizing on the fly to catch runtime uiscale changes
+		self.tx:SetPoint( "TOPLEFT", -1, -2 / self:GetEffectiveScale( ) )
+		self.tx:SetPoint( "RIGHT", 1, 0 )
+		self.tx:SetHeight( 0.6 / self:GetEffectiveScale( ) )
+	end
+)
+underlineFrame:SetHeight( 1 )
 -- END underline on mouseover
 
 
@@ -299,7 +283,7 @@ local function GetScaledCursorPosition()
 	return x / scale, y / scale
 end
 
-local function StartCounting(self, level)
+local function StartCounting(level)
 	for i = level, 1, -1 do
 		if levels[i] then
 			levels[i].count = 3
@@ -307,7 +291,7 @@ local function StartCounting(self, level)
 	end
 end
 
-local function StopCounting(self, level)
+local function StopCounting(level)
 	for i = level, 1, -1 do
 		if levels[i] then
 			levels[i].count = nil
@@ -322,7 +306,7 @@ local function OnUpdate(self, elapsed)
 			count = count - elapsed
 			if count < 0 then
 				level.count = nil
-				self:Close(level.num)
+				Dewdrop:Close(level.num)
 			else
 				level.count = count
 			end
@@ -330,7 +314,7 @@ local function OnUpdate(self, elapsed)
 	end
 end
 
-local function CheckDualMonitor(self, frame)
+local function CheckDualMonitor(frame)
 	local ratio = GetScreenWidth() / GetScreenHeight()
 	if ratio >= 2.4 and frame:GetRight() > GetScreenWidth() / 2 and frame:GetLeft() < GetScreenWidth() / 2 then
 		local offsetx
@@ -344,7 +328,7 @@ local function CheckDualMonitor(self, frame)
 	end
 end
 
-local function CheckSize(self, level)
+local function CheckSize(level)
 	if not level.buttons then
 		return
 	end
@@ -353,7 +337,7 @@ local function CheckSize(self, level)
 		height = height + button:GetHeight()
 	end
 	level:SetHeight(height)
-	local width = 160
+	local width = 50
 	for _, button in ipairs(level.buttons) do
 		local extra = 1
 		if button.hasArrow or button.hasColorSwatch then
@@ -362,7 +346,7 @@ local function CheckSize(self, level)
 		if not button.notCheckable then
 			extra = extra + 24
 		end
-		button.text:SetFont(STANDARD_TEXT_FONT, button.textHeight)
+		--button.text:SetFont(STANDARD_TEXT_FONT, button.textHeight)
 		if button.text:GetStringWidth() + extra > width then
 			width = button.text:GetStringWidth() + extra
 		end
@@ -390,7 +374,7 @@ local function CheckSize(self, level)
 	end
 	local dirty = false
 	if not level:GetRight() then
-		self:Close()
+		Dewdrop:Close()
 		return
 	end
 	if level:GetRight() > GetScreenWidth() and level.lastDirection == "RIGHT" then
@@ -438,7 +422,7 @@ local function CheckSize(self, level)
 		level:ClearAllPoints()
 		level:SetPoint(point, parent, relativePoint, x or 0, (y or 0) - bottom)
 	end
-	CheckDualMonitor(self, level)
+	CheckDualMonitor(level)
 	if mod(level.num, 5) == 0 then
 		local left, bottom = level:GetLeft(), level:GetBottom()
 		level:ClearAllPoints()
@@ -451,7 +435,7 @@ local OpenSlider
 local OpenEditBox
 local Refresh
 local Clear
-local function ReleaseButton(self, level, index)
+local function ReleaseButton(level, index)
 	if not level.buttons then
 		return
 	end
@@ -476,7 +460,7 @@ local function ReleaseButton(self, level, index)
 	return true
 end
 
-local function Scroll(self, level, down)
+local function Scroll(level, down)
 	if down then
 		if level:GetBottom() < 0 then
 			local point, parent, relativePoint, x, y = level:GetPoint(1)
@@ -518,87 +502,54 @@ local function fillRegionTmp(...)
 	end
 end
 
-local function showGameTooltip(this)
-	if this.tooltipTitle or this.tooltipText then
-		GameTooltip_SetDefaultAnchor(GameTooltip, this)
-		local disabled = not this.isTitle and this.disabled
-		local font
-		if this.tooltipTitle then
-			if SharedMedia and SharedMedia:IsValid("font", this.tooltipTitle) then
-				font = SharedMedia:Fetch("font", this.tooltipTitle)
-			end
+local function showGameTooltip(self)
+	if self.tooltipTitle or self.tooltipText then
+		GameTooltip_SetDefaultAnchor(GameTooltip, self)
+		local disabled = not self.isTitle and self.disabled
+		if self.tooltipTitle then
 			if disabled then
-				GameTooltip:SetText(this.tooltipTitle, 0.5, 0.5, 0.5, 1)
+				GameTooltip:SetText(self.tooltipTitle, 0.5, 0.5, 0.5, 1)
 			else
-				GameTooltip:SetText(this.tooltipTitle, 1, 1, 1, 1)
+				GameTooltip:SetText(self.tooltipTitle, 1, 1, 1, 1)
 			end
-			if this.tooltipText then
-				if not font and SharedMedia and SharedMedia:IsValid("font", this.tooltipText) then
-					font = SharedMedia:Fetch("font", this.tooltipText)
-				end
+			if self.tooltipText then
 				if disabled then
-					GameTooltip:AddLine(this.tooltipText, (NORMAL_FONT_COLOR.r + 0.5) / 2, (NORMAL_FONT_COLOR.g + 0.5) / 2, (NORMAL_FONT_COLOR.b + 0.5) / 2, 1)
+					GameTooltip:AddLine(self.tooltipText, (NORMAL_FONT_COLOR.r + 0.5) / 2, (NORMAL_FONT_COLOR.g + 0.5) / 2, (NORMAL_FONT_COLOR.b + 0.5) / 2, 1)
 				else
-					GameTooltip:AddLine(this.tooltipText, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1)
+					GameTooltip:AddLine(self.tooltipText, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1)
 				end
 			end
 		else
-			if SharedMedia and SharedMedia:IsValid("font", this.tooltipText) then
-				font = SharedMedia:Fetch("font", this.tooltipText)
-			end
 			if disabled then
-				GameTooltip:SetText(this.tooltipText, 0.5, 0.5, 0.5, 1)
+				GameTooltip:SetText(self.tooltipText, 0.5, 0.5, 0.5, 1)
 			else
-				GameTooltip:SetText(this.tooltipText, 1, 1, 1, 1)
-			end
-		end
-		if font then
-			fillRegionTmp(GameTooltip:GetRegions())
-			lastSetFont = font
-			justSetFont = true
-			for i,v in ipairs(regionTmp) do
-				if v.SetFont then
-					local norm,size,outline = v:GetFont()
-					v:SetFont(font, size, outline)
-					if not normalFont then
-						normalFont = norm
-					end
-				end
-				regionTmp[i] = nil
-			end
-		elseif not normalFont then
-			fillRegionTmp(GameTooltip:GetRegions())
-			for i,v in ipairs(regionTmp) do
-				if v.GetFont and not normalFont then
-					normalFont = v:GetFont()
-				end
-				regionTmp[i] = nil
+				GameTooltip:SetText(self.tooltipText, 1, 1, 1, 1)
 			end
 		end
 		GameTooltip:Show()
 	end
-	if this.tooltipFunc then
-		GameTooltip:SetOwner(this, "ANCHOR_NONE")
-		GameTooltip:SetPoint("TOPLEFT", this, "TOPRIGHT", 5, 0)
-		this.tooltipFunc(getArgs(this, 'tooltipArg', 1))
+	if self.tooltipFunc then
+		GameTooltip:SetOwner(self, "ANCHOR_NONE")
+		GameTooltip:SetPoint("TOPLEFT", self, "TOPRIGHT", 5, 0)
+		self.tooltipFunc(getArgs(self, 'tooltipArg', 1))
 		GameTooltip:Show()
 	end
 end
 
 local tmpt = setmetatable({}, {mode='v'})
 local numButtons = 0
-local function AcquireButton(self, level)
+local function AcquireButton( level )
 	if not levels[level] then
 		return
 	end
 	level = levels[level]
 	if not level.buttons then
-		level.buttons = {}
+		level.buttons = { }
 	end
 	local button
 	if #buttons == 0 then
 		numButtons = numButtons + 1
-		button = CreateFrame("Button", "Dewdrop20Button" .. numButtons, nil)
+		button = CreateFrame("Button", "LibDewdrop30Button" .. numButtons, UIParent, BackdropTemplateMixin and "BackdropTemplate");
 		button:SetFrameStrata("FULLSCREEN_DIALOG")
 		button:SetHeight(16)
 		local highlight = button:CreateTexture(nil, "BACKGROUND")
@@ -620,74 +571,74 @@ local function AcquireButton(self, level)
 		radioHighlight:SetBlendMode("ADD")
 		radioHighlight:SetTexCoord(0.5, 0.75, 0, 1)
 		radioHighlight:Hide()
-		button:SetScript("OnEnter", function(this)
-			if (sliderFrame and sliderFrame:IsShown() and sliderFrame.mouseDown and sliderFrame.level == this.level.num + 1) or (editBoxFrame and editBoxFrame:IsShown() and editBoxFrame.mouseDown and editBoxFrame.level == this.level.num + 1) then
-				for i = 1, this.level.num do
-					Refresh(self, levels[i])
+		button:SetScript("OnEnter", function(self)
+			if (sliderFrame and sliderFrame:IsShown() and sliderFrame.mouseDown and sliderFrame.level == self.level.num + 1) or (editBoxFrame and editBoxFrame:IsShown() and editBoxFrame.mouseDown and editBoxFrame.level == self.level.num + 1) then
+				for i = 1, self.level.num do
+					Refresh(levels[i])
 				end
 				return
 			end
-			self:Close(this.level.num + 1)
-			if not this.disabled then
-				if this.secure then
-					secureFrame:Activate(this)
-				elseif this.hasSlider then
-					OpenSlider(self, this)
-				elseif this.hasEditBox then
-					OpenEditBox(self, this)
-				elseif this.hasArrow then
-					Open(self, this, nil, this.level.num + 1, this.value)
+			Dewdrop:Close(self.level.num + 1)
+			if not self.disabled then
+				if self.secure then
+					secureFrame:Activate(self)
+				elseif self.hasSlider then
+					OpenSlider(self)
+				elseif self.hasEditBox then
+					OpenEditBox(self)
+				elseif self.hasArrow then
+					Open(self, nil, self.level.num + 1, self.value)
 				end
 			end
-			if not this.level then -- button reclaimed
+			if not self.level then -- button reclaimed
 				return
 			end
-			StopCounting(self, this.level.num + 1)
-			if not this.disabled then
+			StopCounting(self.level.num + 1)
+			if not self.disabled then
 				highlight:Show()
-				if this.isRadio then
+				if self.isRadio then
 					button.radioHighlight:Show()
 				end
-				if this.mouseoverUnderline then
-					underlineFrame:SetParent(this)
-					underlineFrame:SetPoint("BOTTOMLEFT",this.text,0,0)
-					underlineFrame:SetWidth(this.text:GetWidth())
+				if self.mouseoverUnderline then
+					underlineFrame:SetParent(self)
+					underlineFrame:SetPoint("BOTTOMLEFT",self.text,0,0)
+					underlineFrame:SetWidth(self.text:GetStringWidth())
 					underlineFrame:Show()
 				end
 			end
-			showGameTooltip(this)
+			showGameTooltip(self)
 		end)
-		button:SetScript("OnHide", function(this)
-			if this.secure and secureFrame:IsOwnedBy(this) then
+		button:SetScript("OnHide", function(self)
+			if self.secure and secureFrame:IsOwnedBy(self) then
 				secureFrame:Deactivate()
 			end
 		end)
-		button:SetScript("OnLeave", function(this)
-			if this.secure and secureFrame:IsShown() then
+		button:SetScript("OnLeave", function(self)
+			if self.secure and secureFrame:IsShown() then
 				return;	-- it's ok, we didn't actually mouse out of the button, only onto the secure frame on top of it
 			end
 			underlineFrame:Hide()
-			if not this.selected then
+			if not self.selected then
 				highlight:Hide()
 			end
 			button.radioHighlight:Hide()
-			if this.level then
-				StartCounting(self, this.level.num)
+			if self.level then
+				StartCounting(self.level.num)
 			end
 			GameTooltip:Hide()
 		end)
 		local first = true
-		button:SetScript("OnClick", function(this)
-			if not this.disabled then
-				if this.hasColorSwatch then
+		button:SetScript("OnClick", function(self)
+			if not self.disabled then
+				if self.hasColorSwatch then
 					local func = button.colorFunc
-					local hasOpacity = this.hasOpacity
-					local this = this
+					local hasOpacity = self.hasOpacity
+					local self = self
 					for k in pairs(tmpt) do
 						tmpt[k] = nil
 					end
 					for i = 1, 1000 do
-						local x = this['colorArg'..i]
+						local x = self['colorArg'..i]
 						if x == nil then
 							break
 						else
@@ -710,11 +661,11 @@ local function AcquireButton(self, level)
 							tmpt[n+4] = nil
 						end
 					end
-					ColorPickerFrame.hasOpacity = this.hasOpacity
+					ColorPickerFrame.hasOpacity = self.hasOpacity
 					ColorPickerFrame.opacityFunc = ColorPickerFrame.func
-					ColorPickerFrame.opacity = 1 - this.opacity
-					ColorPickerFrame:SetColorRGB(this.r, this.g, this.b)
-					local r, g, b, a = this.r, this.g, this.b, this.opacity
+					ColorPickerFrame.opacity = 1 - self.opacity
+					ColorPickerFrame:SetColorRGB(self.r, self.g, self.b)
+					local r, g, b, a = self.r, self.g, self.b, self.opacity
 					ColorPickerFrame.cancelFunc = function()
 						if func then
 							local n = #tmpt
@@ -728,23 +679,23 @@ local function AcquireButton(self, level)
 							end
 						end
 					end
-					self:Close(1)
+					Dewdrop:Close(1)
 					ShowUIPanel(ColorPickerFrame)
-				elseif this.func then
-					local level = this.level
-					if type(this.func) == "string" then
-						if type(this.arg1[this.func]) ~= "function" then
-							self:error("Cannot call method %q", this.func)
+				elseif self.func then
+					local level = self.level
+					if type(self.func) == "string" then
+						if type(self.arg1[self.func]) ~= "function" then
+							self:error("Cannot call method %q", self.func)
 						end
-						this.arg1[this.func](this.arg1, getArgs(this, 'arg', 2))
+						self.arg1[self.func](self.arg1, getArgs(self, 'arg', 2))
 					else
-						this.func(getArgs(this, 'arg', 1))
+						self.func(getArgs(self, 'arg', 1))
 					end
-					if this.closeWhenClicked then
-						self:Close()
+					if self.closeWhenClicked then
+						Dewdrop:Close()
 					elseif level:IsShown() then
 						for i = 1, level.num do
-							Refresh(self, levels[i])
+							Refresh(levels[i])
 						end
 						local value = levels[level.num].value
 						for i = level.num-1, 1, -1 do
@@ -762,23 +713,23 @@ local function AcquireButton(self, level)
 							value = levels[i].value
 						end
 					end
-				elseif this.closeWhenClicked then
-					self:Close()
+				elseif self.closeWhenClicked then
+					Dewdrop:Close()
 				end
 			end
 		end)
+		
 		local text = button:CreateFontString(nil, "ARTWORK")
 		button.text = text
-		text:SetFontObject(GameFontHighlightSmall)
-		button.text:SetFont(STANDARD_TEXT_FONT, UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT)
-		button:SetScript("OnMouseDown", function(this)
-			if not this.disabled and (this.func or this.colorFunc or this.closeWhenClicked) then
-				text:SetPoint("LEFT", button, "LEFT", this.notCheckable and 1 or 25, -1)
+
+		button:SetScript("OnMouseDown", function(self)
+			if not self.disabled and (self.func or self.colorFunc or self.closeWhenClicked) then
+				text:SetPoint("LEFT", button, "LEFT", self.notCheckable and 1 or 25, -1)
 			end
 		end)
-		button:SetScript("OnMouseUp", function(this)
-			if not this.disabled and (this.func or this.colorFunc or this.closeWhenClicked) then
-				text:SetPoint("LEFT", button, "LEFT", this.notCheckable and 0 or 24, 0)
+		button:SetScript("OnMouseUp", function(self)
+			if not self.disabled and (self.func or self.colorFunc or self.closeWhenClicked) then
+				text:SetPoint("LEFT", button, "LEFT", self.notCheckable and 0 or 24, 0)
 			end
 		end)
 		local arrow = button:CreateTexture(nil, "ARTWORK")
@@ -849,18 +800,18 @@ local function AcquireButton(self, level)
 end
 
 local numLevels = 0
-local function AcquireLevel(self, level)
+local function AcquireLevel(level)
 	if not levels[level] then
 		for i = #levels + 1, level, -1 do
 			local i = i
 			numLevels = numLevels + 1
-			local frame = CreateFrame("Button", "Dewdrop20Level" .. numLevels, nil)
+			local frame = CreateFrame("Button", "LibDewdrop30Level" .. numLevels, UIParent, BackdropTemplateMixin and "BackdropTemplate");
 			if i == 1 then
 				local old_CloseSpecialWindows = CloseSpecialWindows
 				function CloseSpecialWindows()
 					local found = old_CloseSpecialWindows()
 					if levels[1]:IsShown() then
-						self:Close()
+						Dewdrop:Close()
 						return 1
 					end
 					return found
@@ -875,14 +826,14 @@ local function AcquireLevel(self, level)
 			frame:SetHeight(10)
 			frame:SetFrameLevel(i * 3)
 			frame:SetScript("OnHide", function()
-				self:Close(level + 1)
+				Dewdrop:Close(level + 1)
 			end)
 			if frame.SetTopLevel then
 				frame:SetTopLevel(true)
 			end
 			frame:EnableMouse(true)
 			frame:EnableMouseWheel(true)
-			local backdrop = CreateFrame("Frame", nil, frame)
+			local backdrop = CreateFrame("Frame", nil, frame, BackdropTemplateMixin and "BackdropTemplate");
 			backdrop:SetAllPoints(frame)
 			backdrop:SetBackdrop(tmp(
 				'bgFile', "Interface\\Tooltips\\UI-Tooltip-Background",
@@ -899,21 +850,21 @@ local function AcquireLevel(self, level)
 			))
 			backdrop:SetBackdropBorderColor(TOOLTIP_DEFAULT_COLOR.r, TOOLTIP_DEFAULT_COLOR.g, TOOLTIP_DEFAULT_COLOR.b)
 			backdrop:SetBackdropColor(TOOLTIP_DEFAULT_BACKGROUND_COLOR.r, TOOLTIP_DEFAULT_BACKGROUND_COLOR.g, TOOLTIP_DEFAULT_BACKGROUND_COLOR.b)
-			frame:SetScript("OnClick", function()
-				self:Close(i)
+			frame:SetScript("OnClick", function(self)
+				Dewdrop:Close(i)
 			end)
-			frame:SetScript("OnEnter", function()
-				StopCounting(self, i)
+			frame:SetScript("OnEnter", function(self)
+				StopCounting(i)
 			end)
-			frame:SetScript("OnLeave", function()
-				StartCounting(self, i)
+			frame:SetScript("OnLeave", function(self)
+				StartCounting(i)
 			end)
-			frame:SetScript("OnMouseWheel", function(this, arg1)
-				Scroll(self, frame, arg1 < 0)
+			frame:SetScript("OnMouseWheel", function(self, arg1)
+				Scroll(self, arg1 < 0)
 			end)
 			if i == 1 then
-				frame:SetScript("OnUpdate", function(this, arg1)
-					OnUpdate(self, arg1)
+				frame:SetScript("OnUpdate", function(self, elapsed)
+					OnUpdate(self, elapsed)
 				end)
 				levels[1].lastDirection = "RIGHT"
 				levels[1].lastVDirection = "DOWN"
@@ -1198,10 +1149,10 @@ local othersort_validate
 local baseFunc, currentLevel
 
 local function confirmPopup(message, func, ...)
-	if not StaticPopupDialogs["DEWDROP20_CONFIRM_DIALOG"] then
-		StaticPopupDialogs["DEWDROP20_CONFIRM_DIALOG"] = {}
+	if not StaticPopupDialogs["LIBDEWDROP30_CONFIRM_DIALOG"] then
+		StaticPopupDialogs["LIBDEWDROP30_CONFIRM_DIALOG"] = {}
 	end
-	local t = StaticPopupDialogs["DEWDROP20_CONFIRM_DIALOG"]
+	local t = StaticPopupDialogs["LIBDEWDROP30_CONFIRM_DIALOG"]
 	for k in pairs(t) do
 		t[k] = nil
 	end
@@ -1219,7 +1170,7 @@ local function confirmPopup(message, func, ...)
 	t.hideOnEscape = 1
 
 	Dewdrop:Close()
-	StaticPopup_Show("DEWDROP20_CONFIRM_DIALOG")
+	StaticPopup_Show("LIBDEWDROP30_CONFIRM_DIALOG")
 end
 
 
@@ -1289,6 +1240,12 @@ local function skip1Nil(...)
 	return ...
 end
 
+Dewdrop.fontsize = 14
+
+function Dewdrop:SetFontSize(fontSize)
+	Dewdrop.fontsize = tonumber(fontSize)
+end
+
 function Dewdrop:FeedAceOptionsTable(options, difference)
 	self:argCheck(options, 2, "table")
 	self:argCheck(difference, 3, "nil", "number")
@@ -1306,9 +1263,9 @@ function Dewdrop:FeedAceOptionsTable(options, difference)
 
 		if err then
 			if position then
-				Dewdrop:error(position .. ": " .. err)
+				self:error(position .. ": " .. err)
 			else
-				Dewdrop:error(err)
+				self:error(err)
 			end
 		end
 
@@ -1849,7 +1806,7 @@ function Dewdrop:FeedTable(s, difference)
 	return true
 end
 
-function Refresh(self, level)
+function Refresh(level)
 	if type(level) == "number" then
 		level = levels[level]
 	end
@@ -1857,7 +1814,7 @@ function Refresh(self, level)
 		return
 	end
 	if baseFunc then
-		Clear(self, level)
+		Clear(level)
 		currentLevel = level.num
 		if type(baseFunc) == "table" then
 			if currentLevel == 1 then
@@ -1866,24 +1823,16 @@ function Refresh(self, level)
 					local name = tostring(handler)
 					if not name:find('^table:') and not handler.hideMenuTitle then
 						name = name:gsub("|c%x%x%x%x%x%x%x%x(.-)|r", "%1")
-						self:AddLine(
+						Dewdrop:AddLine(
 							'text', name,
 							'isTitle', true
 						)
 					end
 				end
---			elseif level.parentText then
---				self:AddLine(
---					'text', level.parentText,
---					'tooltipTitle', level.parentTooltipTitle,
---					'tooltipText', level.parentTooltipText,
---					'tooltipFunc', level.parentTooltipFunc,
---					'isTitle', true
---				)
 			end
-			self:FeedAceOptionsTable(baseFunc)
+			Dewdrop:FeedAceOptionsTable(baseFunc)
 			if currentLevel == 1 then
-				self:AddLine(
+				Dewdrop:AddLine(
 					'text', CLOSE,
 					'tooltipTitle', CLOSE,
 					'tooltipText', CLOSE_DESC,
@@ -1891,36 +1840,28 @@ function Refresh(self, level)
 				)
 			end
 		else
---			if level.parentText then
---				self:AddLine(
---					'text', level.parentText,
---					'tooltipTitle', level.parentTooltipTitle,
---					'tooltipText', level.parentTooltipText,
---					'tooltipFunc', level.parentTooltipFunc,
---					'isTitle', true
---				)
---			end
 			baseFunc(currentLevel, level.value, levels[level.num - 1] and levels[level.num - 1].value, levels[level.num - 2] and levels[level.num - 2].value, levels[level.num - 3] and levels[level.num - 3].value, levels[level.num - 4] and levels[level.num - 4].value)
 		end
 		currentLevel = nil
-		CheckSize(self, level)
+		CheckSize(level)
 	end
 end
 
 function Dewdrop:Refresh(level)
-	self:argCheck(level, 2, "number", "nil")
+	Dewdrop:argCheck(level, 2, "number", "nil")
 	if not level then
 		for k,v in pairs(levels) do
-			Refresh(self, v)
+			Refresh(v)
 		end
 	else
-		Refresh(self, levels[level])
+		Refresh(levels[level])
 	end
 end
 
-function OpenSlider(self, parent)
+function OpenSlider(parent)
 	if not sliderFrame then
-		sliderFrame = CreateFrame("Frame", nil, nil)
+		
+		sliderFrame = CreateFrame("Frame", nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
 		sliderFrame:SetWidth(100)
 		sliderFrame:SetHeight(170)
 		sliderFrame:SetScale(UIParent:GetScale())
@@ -1947,7 +1888,8 @@ function OpenSlider(self, parent)
 		sliderFrame:EnableMouseWheel(true)
 		sliderFrame:Hide()
 		sliderFrame:SetPoint("CENTER", UIParent, "CENTER")
-		local slider = CreateFrame("Slider", nil, sliderFrame)
+		
+		local slider = CreateFrame("Slider", nil, sliderFrame, BackdropTemplateMixin and "BackdropTemplate");
 		sliderFrame.slider = slider
 		slider:SetOrientation("VERTICAL")
 		slider:SetMinMaxValues(0, 1)
@@ -1981,7 +1923,8 @@ function OpenSlider(self, parent)
 		text:SetFontObject(GameFontGreenSmall)
 		text:SetText("0%")
 		text:SetPoint("TOP", slider, "BOTTOM")
-		local editBox = CreateFrame("EditBox", nil, sliderFrame)
+		
+		local editBox = CreateFrame("EditBox", nil, sliderFrame, BackdropTemplateMixin and "BackdropTemplate")
 		sliderFrame.currentText = editBox
 		editBox:SetFontObject(ChatFontNormal)
 		editBox:SetHeight(13)
@@ -2074,7 +2017,7 @@ function OpenSlider(self, parent)
 			end
 		end)
 		local function onEnter()
-			StopCounting(self, sliderFrame.level)
+			StopCounting(sliderFrame.level)
 			showGameTooltip(sliderFrame.parent)
 		end
 		local function onLeave()
@@ -2087,7 +2030,7 @@ function OpenSlider(self, parent)
 				local parent = sliderFrame.parent
 				local sliderFunc = parent.sliderFunc
 				for i = 1, sliderFrame.level - 1 do
-					Refresh(self, levels[i])
+					Refresh(levels[i])
 				end
 				local newParent
 				for _,button in ipairs(levels[sliderFrame.level-1].buttons) do
@@ -2097,7 +2040,7 @@ function OpenSlider(self, parent)
 					end
 				end
 				if newParent then
-					OpenSlider(self, newParent)
+					OpenSlider(newParent)
 				else
 					sliderFrame:Hide()
 				end
@@ -2115,7 +2058,7 @@ function OpenSlider(self, parent)
 				local parent = sliderFrame.parent
 				local sliderFunc = parent.sliderFunc
 				for i = 1, sliderFrame.level - 1 do
-					Refresh(self, levels[i])
+					Refresh(levels[i])
 				end
 				local newParent
 				for _,button in ipairs(levels[sliderFrame.level-1].buttons) do
@@ -2125,7 +2068,7 @@ function OpenSlider(self, parent)
 					end
 				end
 				if newParent then
-					OpenSlider(self, newParent)
+					OpenSlider(newParent)
 				else
 					sliderFrame:Hide()
 				end
@@ -2136,7 +2079,7 @@ function OpenSlider(self, parent)
 		end)
 		slider:SetScript("OnEnter", function()
 			inside = true
-			StopCounting(self, sliderFrame.level)
+			StopCounting(sliderFrame.level)
 			showGameTooltip(sliderFrame.parent)
 		end)
 		slider:SetScript("OnLeave", function()
@@ -2146,7 +2089,7 @@ function OpenSlider(self, parent)
 				local parent = sliderFrame.parent
 				local sliderFunc = parent.sliderFunc
 				for i = 1, sliderFrame.level - 1 do
-					Refresh(self, levels[i])
+					Refresh(levels[i])
 				end
 				local newParent
 				for _,button in ipairs(levels[sliderFrame.level-1].buttons) do
@@ -2156,7 +2099,7 @@ function OpenSlider(self, parent)
 					end
 				end
 				if newParent then
-					OpenSlider(self, newParent)
+					OpenSlider(newParent)
 				else
 					sliderFrame:Hide()
 				end
@@ -2164,17 +2107,16 @@ function OpenSlider(self, parent)
 				changed = false
 			end
 		end)
-		sliderFrame:SetScript("OnMouseWheel", function(t, a1)
-			local arg1 = a1 or arg1
+		sliderFrame:SetScript("OnMouseWheel", function(self, arg1)
 			local up = arg1 > 0
-
+			
 			local min = sliderFrame.parent.sliderMin or 0
 			local max = sliderFrame.parent.sliderMax or 1
 			local step = sliderFrame.parent.sliderStep or (max - min) / 100
 			if step <= 0 then
 				step = (max - min) / 100
 			end
-
+			
 			local value = (1 - slider:GetValue()) * (max - min) + min
 			if up then
 				value = value + step
@@ -2195,7 +2137,7 @@ function OpenSlider(self, parent)
 			sliderFrame.fineStep = nil
 		end)
 		slider:SetScript("OnMouseWheel", sliderFrame:GetScript("OnMouseWheel"))
-		editBox:SetScript("OnEnterPressed", function(t, a1)
+		editBox:SetScript("OnEnterPressed", function()
 			local value = editBox:GetNumber()
 
 			if sliderFrame.parent.sliderIsPercent then
@@ -2218,11 +2160,11 @@ function OpenSlider(self, parent)
 			end
 			sliderFrame.fineStep = nil
 
-			StartCounting(self, sliderFrame.level)
+			StartCounting(sliderFrame.level)
 		end)
 		editBox:SetScript("OnEscapePressed", function()
-			self:Close(sliderFrame.level)
-			StartCounting(self, sliderFrame.level)
+			Dewdrop:Close(sliderFrame.level)
+			StartCounting(sliderFrame.level)
 		end)
 		editBox:SetAutoFocus(false)
 	end
@@ -2341,9 +2283,9 @@ function OpenSlider(self, parent)
 	sliderFrame:SetClampedToScreen(true)
 end
 
-function OpenEditBox(self, parent)
+function OpenEditBox(parent)
 	if not editBoxFrame then
-		editBoxFrame = CreateFrame("Frame", nil, nil)
+		editBoxFrame = CreateFrame("Frame", nil, UIParent, BackdropTemplateMixin and "BackdropTemplate");
 		editBoxFrame:SetWidth(200)
 		editBoxFrame:SetHeight(40)
 		editBoxFrame:SetScale(UIParent:GetScale())
@@ -2371,7 +2313,7 @@ function OpenEditBox(self, parent)
 		editBoxFrame:Hide()
 		editBoxFrame:SetPoint("CENTER", UIParent, "CENTER")
 
-		local editBox = CreateFrame("EditBox", nil, editBoxFrame)
+		local editBox = CreateFrame("EditBox", nil, editBoxFrame, BackdropTemplateMixin and "BackdropTemplate");
 		editBoxFrame.editBox = editBox
 		editBox:SetFontObject(ChatFontNormal)
 		editBox:SetWidth(160)
@@ -2407,17 +2349,17 @@ function OpenEditBox(self, parent)
 				end
 				editBoxFrame.parent.editBoxFunc(getArgs(editBoxFrame.parent, 'editBoxArg', 1, t))
 			end
-			self:Close(editBoxFrame.level)
+			Dewdrop:Close(editBoxFrame.level)
 			for i = 1, editBoxFrame.level - 1 do
-				Refresh(self, levels[i])
+				Refresh(levels[i])
 			end
-			StartCounting(self, editBoxFrame.level-1)
+			StartCounting(editBoxFrame.level-1)
 		end)
 		editBox:SetScript("OnEscapePressed", function()
-			self:Close(editBoxFrame.level)
-			StartCounting(self, editBoxFrame.level-1)
+			Dewdrop:Close(editBoxFrame.level)
+			StartCounting(editBoxFrame.level-1)
 		end)
-		editBox:SetScript("OnReceiveDrag", function(this)
+		editBox:SetScript("OnReceiveDrag", function()
 			if GetCursorInfo then
 				local type, alpha, bravo = GetCursorInfo()
 				local text
@@ -2464,24 +2406,23 @@ function OpenEditBox(self, parent)
 			end
 		end)
 		editBoxFrame:SetScript("OnEnter", function()
-			StopCounting(self, editBoxFrame.level)
+			StopCounting(editBoxFrame.level)
 			showGameTooltip(editBoxFrame.parent)
 		end)
 		editBoxFrame:SetScript("OnLeave", function()
 			GameTooltip:Hide()
 		end)
 		editBox:SetScript("OnEnter", function()
-			StopCounting(self, editBoxFrame.level)
+			StopCounting(editBoxFrame.level)
 			showGameTooltip(editBoxFrame.parent)
 		end)
 		editBox:SetScript("OnLeave", function()
 			GameTooltip:Hide()
 		end)
-		editBoxFrame:SetScript("OnKeyDown", function(this, a1)
+		editBoxFrame:SetScript("OnKeyDown", function(self, arg1)
 			if not editBox.keybinding then
 				return
 			end
-			local arg1 = a1 or arg1
 			local screenshotKey = GetBindingKey("SCREENSHOT")
 			if screenshotKey and arg1 == screenshotKey then
 				Screenshot()
@@ -2551,17 +2492,15 @@ function OpenEditBox(self, parent)
 			end
 		end)
 		editBoxFrame:SetScript("OnMouseDown", editBoxFrame:GetScript("OnKeyDown"))
-		editBox:SetScript("OnMouseDown", function(this, ...)
+		editBox:SetScript("OnMouseDown", function(self, ...)
 			if GetCursorInfo and (CursorHasItem() or CursorHasSpell()) then
-				return editBox:GetScript("OnReceiveDrag")(this, ...)
+				return editBox:GetScript("OnReceiveDrag")(self, ...)
 			end
-			return editBoxFrame:GetScript("OnKeyDown")(this, ...)
+			return editBoxFrame:GetScript("OnKeyDown")(self, ...)
 		end)
-		editBoxFrame:SetScript("OnMouseWheel", function(t, a1)
-			local arg1 = a1 or arg1
-			local up = arg1 > 0
-			arg1 = up and "MOUSEWHEELUP" or "MOUSEWHEELDOWN"
-			return editBoxFrame:GetScript("OnKeyDown")(t or this, arg1)
+		editBoxFrame:SetScript("OnMouseWheel", function(self, arg1)
+			local up = ( arg1 > 0 ) and "MOUSEWHEELUP" or "MOUSEWHEELDOWN"
+			return editBoxFrame:GetScript("OnKeyDown")(self, up)
 		end)
 		editBox:SetScript("OnMouseWheel", editBoxFrame:GetScript("OnMouseWheel"))
 	end
@@ -2735,6 +2674,25 @@ function Dewdrop:EncodeKeybinding(text)
 	return s
 end
 
+local function GetTipAnchor(frame)
+	local x, y = frame:GetCenter()
+	if not x or not y then return "TOPLEFT", "BOTTOMLEFT" end
+	local hhalf = (x > UIParent:GetWidth() * 2 / 3) and "RIGHT" or (x < UIParent:GetWidth() / 3) and "LEFT" or ""
+	local vhalf = (y > UIParent:GetHeight() / 2) and "TOP" or "BOTTOM"
+	return vhalf .. hhalf, frame, (vhalf == "TOP" and "BOTTOM" or "TOP") .. hhalf
+end
+
+function Dewdrop:SmartAnchorTo(frame)
+	if not frame then
+		error("Invalid frame provided.", 2)
+	end
+	if (levels[1] and levels[1]:IsShown()) then
+		levels[1]:ClearAllPoints()
+		levels[1]:SetClampedToScreen(true)
+		levels[1]:SetPoint(GetTipAnchor(frame))
+	end
+end
+
 function Dewdrop:IsOpen(parent)
 	self:argCheck(parent, 2, "table", "string", "nil")
 	return levels[1] and levels[1]:IsShown() and (not parent or parent == levels[1].parent or parent == levels[1]:GetParent())
@@ -2744,19 +2702,12 @@ function Dewdrop:GetOpenedParent()
 	return (levels[1] and levels[1]:IsShown()) and (levels[1].parent or levels[1]:GetParent())
 end
 
-function Open(self, parent, func, level, value, point, relativePoint, cursorX, cursorY)
-	self:Close(level)
-	if DewdropLib then
-		local d = DewdropLib:GetInstance('1.0')
-		local ret, val = pcall(d, IsOpen, d)
-		if ret and val then
-			DewdropLib:GetInstance('1.0'):Close()
-		end
-	end
+function Open(parent, func, level, value, point, relativePoint, cursorX, cursorY)
+	Dewdrop:Close(level)
 	if type(parent) == "table" then
 		parent:GetCenter()
 	end
-	local frame = AcquireLevel(self, level)
+	local frame = AcquireLevel(level)
 	if level == 1 then
 		frame.lastDirection = "RIGHT"
 		frame.lastVDirection = "DOWN"
@@ -2785,7 +2736,7 @@ function Open(self, parent, func, level, value, point, relativePoint, cursorX, c
 		parent.highlight:Show()
 	end
 	relativePoint = relativePoint or point
-	Refresh(self, levels[level])
+	Refresh(levels[level])
 	if point or (cursorX and cursorY) then
 		frame:ClearAllPoints()
 		if cursorX and cursorY then
@@ -2901,70 +2852,15 @@ function Open(self, parent, func, level, value, point, relativePoint, cursorX, c
 			end
 		end
 	end
-	CheckDualMonitor(self, frame)
+	CheckDualMonitor(frame)
 	frame:SetClampedToScreen(true)
 	frame:SetClampedToScreen(false)
-	StartCounting(self, level)
+	StartCounting(level)
 end
 
 function Dewdrop:IsRegistered(parent)
 	self:argCheck(parent, 2, "table", "string")
 	return not not self.registry[parent]
-end
-
-function Dewdrop:Register(parent, ...)
-	self:argCheck(parent, 2, "table", "string")
-	if self.registry[parent] then
-		self:Unregister(parent)
-	end
-	local info = new(...)
-	if type(info.children) == "table" then
-		local err, position = validateOptions(info.children)
-
-		if err then
-			if position then
-				Dewdrop:error(position .. ": " .. err)
-			else
-				Dewdrop:error(err)
-			end
-		end
-	end
-	self.registry[parent] = info
-	if not info.dontHook and not self.onceRegistered[parent] and type(parent) == "table" then
-		if parent:HasScript("OnMouseUp") then
-			local script = parent:GetScript("OnMouseUp")
-			parent:SetScript("OnMouseUp", function(this, ...)
-			    local arg1 = ...
-				if script then
-					script(this, ...)
-				end
-				if arg1 == "RightButton" and self.registry[parent] then
-					if self:IsOpen(parent) then
-						self:Close()
-					else
-						self:Open(parent)
-					end
-				end
-			end)
-		end
-		if parent:HasScript("OnMouseDown") then
-			local script = parent:GetScript("OnMouseDown")
-			parent:SetScript("OnMouseDown", function(this, ...)
-				if script then
-					script(this, ...)
-				end
-				if self.registry[parent] then
-					self:Close()
-				end
-			end)
-		end
-	end
-	self.onceRegistered[parent] = true
-end
-
-function Dewdrop:Unregister(parent)
-	self:argCheck(parent, 2, "table", "string")
-	self.registry[parent] = nil
 end
 
 function Dewdrop:Open(parent, ...)
@@ -3002,14 +2898,15 @@ function Dewdrop:Open(parent, ...)
 	if type(relativePoint) == "function" then
 		relativePoint = relativePoint(parent)
 	end
-	Open(self, parent, info.children, 1, nil, point, relativePoint, cursorX, cursorY)
+	Open(parent, info.children, 1, nil, point, relativePoint, cursorX, cursorY)
+	self:SmartAnchorTo(parent)
 end
 
-function Clear(self, level)
+function Clear(level)
 	if level then
 		if level.buttons then
 			for i = #level.buttons, 1, -1 do
-				ReleaseButton(self, level, i)
+				ReleaseButton(level, i)
 			end
 		end
 	end
@@ -3018,13 +2915,6 @@ end
 function Dewdrop:Close(level)
 	if DropDownList1:IsShown() then
 		DropDownList1:Hide()
-	end
-	if DewdropLib then
-		local d = DewdropLib:GetInstance('1.0')
-		local ret, val = pcall(d, IsOpen, d)
-		if ret and val then
-			DewdropLib:GetInstance('1.0'):Close()
-		end
 	end
 	self:argCheck(level, 2, "number", "nil")
 	if not level then
@@ -3050,7 +2940,7 @@ function Dewdrop:Close(level)
 		editBoxFrame:Hide()
 	end
 	for i = level, #levels do
-		Clear(self, levels[level])
+		Clear(levels[level])
 		levels[i]:Hide()
 		levels[i]:ClearAllPoints()
 		levels[i]:SetPoint("CENTER", UIParent, "CENTER")
@@ -3074,37 +2964,21 @@ end
 function Dewdrop:AddLine(...)
 	local info = tmp(...)
 	local level = info.level or currentLevel
+	if (info.icon and type(info.icon) == "number") then info.icon = tostring(info.icon) end
 	info.level = nil
-	local button = AcquireButton(self, level)
+	local button = AcquireButton( level)
 	if not next(info) then
 		info.disabled = true
 	end
-	button.disabled = info.isTitle or info.notClickable or info.disabled or (self.combat and info.secure)
+	button.disabled = info.isTitle or info.notClickable or info.disabled or (InCombatLockdown( ) and info.secure)
 	button.isTitle = info.isTitle
 	button.notClickable = info.notClickable
-	if button.isTitle then
-		button.text:SetFontObject(GameFontNormalSmall)
-	elseif button.notClickable then
-		button.text:SetFontObject(GameFontHighlightSmall)
-	elseif button.disabled then
-		button.text:SetFontObject(GameFontDisableSmall)
-	else
-		button.text:SetFontObject(GameFontHighlightSmall)
-	end
 	if info.disabled then
 		button.arrow:SetDesaturated(true)
 		button.check:SetDesaturated(true)
 	else
 		button.arrow:SetDesaturated(false)
 		button.check:SetDesaturated(false)
-	end
-	if info.textR and info.textG and info.textB then
-		button.textR = info.textR
-		button.textG = info.textG
-		button.textB = info.textB
-		button.text:SetTextColor(button.textR, button.textG, button.textB)
-	else
-		button.text:SetTextColor(button.text:GetFontObject():GetTextColor())
 	end
 	button.notCheckable = info.notCheckable
 	button.text:SetPoint("LEFT", button, "LEFT", button.notCheckable and 0 or 24, 0)
@@ -3286,10 +3160,47 @@ function Dewdrop:AddLine(...)
 		i = i + 1
 	end
 	button.closeWhenClicked = info.closeWhenClicked
-	button.textHeight = info.textHeight or UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT or 10
-	local font,_ = button.text:GetFont()
-	button.text:SetFont(STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF", button.textHeight)
+--	button.textHeight = info.textHeight or UIDROPDOWNMENU_DEFAULT_TEXT_HEIGHT or 10
+
+	local fontsize = self.fontsize
+	local fontcolor
+
+	button.textHeight = fontsize
+	--button.text:SetFont("Fonts\\MORPHEUS.TTF",button.textHeight)
+--	local font,_ = button.text:GetFont()
+--	print("FONT "..font)	
+	--button.text:SetFont("Fonts\\FRIZQT__.TTF", 4, "OUTLINE")
+	--button.text:SetFont(STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF", button.textHeight)
+
+	if button.isTitle then
+		button.text:SetFont(options.fonts.title.ttf,fontsize)		
+		fontcolor = options.fonts.title.color	
+	elseif button.notClickable then
+		button.text:SetFont(options.fonts.notClickable.ttf,fontsize)		
+		fontcolor = options.fonts.notClickable.color	
+	elseif button.disabled then
+		button.text:SetFont(options.fonts.disabled.ttf,fontsize)		
+		fontcolor = options.fonts.disabled.color	
+	else
+		button.text:SetFont(options.fonts.standard.ttf,fontsize)		
+		fontcolor = options.fonts.standard.color	
+	end
+
+	button.text:SetTextColor(unpack(fontcolor))
+--	button.text:SetTextColor(fontcolor)
+	
+	-- if info.textR and info.textG and info.textB then
+	-- 	button.textR = info.textR
+	-- 	button.textG = info.textG
+	-- 	button.textB = info.textB
+	-- 	button.text:SetTextColor(button.textR, button.textG, button.textB)
+	-- else
+	-- 	button.text:SetTextColor(fontcolor)
+	-- end
+
 	button:SetHeight(button.textHeight + 6)
+	--button:SetHeight( 6)
+
 	button.text:SetPoint("RIGHT", button.arrow, (button.hasColorSwatch or button.hasArrow) and "LEFT" or "RIGHT")
 	button.text:SetJustifyH(info.justifyH or "LEFT")
 	button.text:SetText(info.text)
@@ -3319,70 +3230,6 @@ function Dewdrop:AddLine(...)
 	end
 end
 
-function Dewdrop:InjectAceOptionsTable(handler, options)
-	self:argCheck(handler, 2, "table")
-	self:argCheck(options, 3, "table")
-	if tostring(options.type):lower() ~= "group" then
-		self:error('Cannot inject into options table argument #3 if its type is not "group"')
-	end
-	if options.handler ~= nil and options.handler ~= handler then
-		self:error("Cannot inject into options table argument #3 if it has a different handler than argument #2")
-	end
-	options.handler = handler
-	local class = handler.class
-	if not AceLibrary:HasInstance("AceOO-2.0") or not class then
-		if Rock then
-			-- possible Rock object
-			for mixin in Rock:IterateObjectMixins(handler) do
-				if type(mixin.GetAceOptionsDataTable) == "function" then
-					local t = mixin:GetAceOptionsDataTable(handler)
-					for k,v in pairs(t) do
-						if type(options.args) ~= "table" then
-							options.args = {}
-						end
-						if options.args[k] == nil then
-							options.args[k] = v
-						end
-					end
-				end
-			end
-		end
-	else
-		-- Ace2 object
-		while class and class ~= AceLibrary("AceOO-2.0").Class do
-			if type(class.GetAceOptionsDataTable) == "function" then
-				local t = class:GetAceOptionsDataTable(handler)
-				for k,v in pairs(t) do
-					if type(options.args) ~= "table" then
-						options.args = {}
-					end
-					if options.args[k] == nil then
-						options.args[k] = v
-					end
-				end
-			end
-			local mixins = class.mixins
-			if mixins then
-				for mixin in pairs(mixins) do
-					if type(mixin.GetAceOptionsDataTable) == "function" then
-						local t = mixin:GetAceOptionsDataTable(handler)
-						for k,v in pairs(t) do
-							if type(options.args) ~= "table" then
-								options.args = {}
-							end
-							if options.args[k] == nil then
-								options.args[k] = v
-							end
-						end
-					end
-				end
-			end
-			class = class.super
-		end
-	end
-	return options
-end
-
 function Dewdrop:OnTooltipHide()
 	if lastSetFont then
 		if lastSetFont == normalFont then
@@ -3403,106 +3250,205 @@ function Dewdrop:OnTooltipHide()
 	end
 end
 
-local function activate(self, oldLib, oldDeactivate)
-	Dewdrop = self
-	if oldLib and oldLib.registry then
-		self.registry = oldLib.registry
-		self.onceRegistered = oldLib.onceRegistered
-	else
+local function activate()
+		
+		local self = Dewdrop
+		
 		self.registry = {}
 		self.onceRegistered = {}
 
 		local WorldFrame_OnMouseDown = WorldFrame:GetScript("OnMouseDown")
 		local WorldFrame_OnMouseUp = WorldFrame:GetScript("OnMouseUp")
 		local oldX, oldY, clickTime
-		WorldFrame:SetScript("OnMouseDown", function(this, ...)
+		
+		WorldFrame:SetScript("OnMouseDown", function(self, ...)
 			oldX,oldY = GetCursorPosition()
 			clickTime = GetTime()
 			if WorldFrame_OnMouseDown then
-				WorldFrame_OnMouseDown(this, ...)
+				WorldFrame_OnMouseDown(self, ...)
 			end
 		end)
 
-		WorldFrame:SetScript("OnMouseUp", function(this, ...)
+		WorldFrame:SetScript("OnMouseUp", function(self, ...)
 			local x,y = GetCursorPosition()
 			if not oldX or not oldY or not x or not y or not clickTime then
-				self:Close()
+				Dewdrop:Close()
 				if WorldFrame_OnMouseUp then
-					WorldFrame_OnMouseUp(this, ...)
+					WorldFrame_OnMouseUp(self, ...)
 				end
 				return
 			end
 			local d = math.abs(x - oldX) + math.abs(y - oldY)
 			if d <= 5 and GetTime() - clickTime < 0.5 then
-				self:Close()
+				Dewdrop:Close()
 			end
 			if WorldFrame_OnMouseUp then
-				WorldFrame_OnMouseUp(this, ...)
+				WorldFrame_OnMouseUp(self, ...)
 			end
 		end)
 
 		hooksecurefunc(DropDownList1, "Show", function()
 			if levels[1] and levels[1]:IsVisible() then
-				self:Close()
+				Dewdrop:Close()
 			end
 		end)
 
 		hooksecurefunc("HideDropDownMenu", function()
 			if levels[1] and levels[1]:IsVisible() then
-				self:Close()
+				Dewdrop:Close()
 			end
 		end)
-
+--[[
 		hooksecurefunc("CloseDropDownMenus", function()
 			if levels[1] and levels[1]:IsVisible() then
 				local stack = debugstack()
 				if not stack:find("`TargetFrame_OnHide'") then
-					self:Close()
+					Dewdrop:Close()
 				end
 			end
 		end)
-	end
-	self.frame = oldLib and oldLib.frame or CreateFrame("Frame")
+--]]
+		
+	self.frame = CreateFrame("Frame", nil, UIParent, BackdropTemplateMixin and "BackdropTemplate");
 	self.frame:UnregisterAllEvents()
 	self.frame:RegisterEvent("PLAYER_REGEN_ENABLED")
 	self.frame:RegisterEvent("PLAYER_REGEN_DISABLED")
-	self.frame:Hide()
-	self.frame:SetScript("OnEvent", function(this, event)
-		this:Show()
+	self.frame:SetScript("OnEvent", function(self, event)
 		if event=="PLAYER_REGEN_ENABLED" then			-- track combat state for secure frame operations
 			self.combat = false
 		elseif event=="PLAYER_REGEN_DISABLED" then
 			self.combat = true
 		end
 	end)
-	self.frame:SetScript("OnUpdate", function(this)
-		this:Hide()
-		self:Refresh(1)
+	self.frame:SetScript("OnUpdate", function(self,elapsed)
+		self:Hide()
+		Refresh(1)
 	end)
+	self.frame:Show()
 	self.hookedTooltip = true
-	if not oldLib or not oldLib.hookedTooltip then
-		local OnTooltipHide = GameTooltip:GetScript("OnHide")
-		GameTooltip:SetScript("OnHide", function(this, ...)
+
+	local OnTooltipHide = GameTooltip:GetScript("OnHide")
+		GameTooltip:SetScript("OnHide", function(self, ...)
 			if OnTooltipHide then
-				OnTooltipHide(this, ...)
+				OnTooltipHide(self, ...)
 			end
 			if type(self.OnTooltipHide) == "function" then
 				self:OnTooltipHide()
 			end
 		end)
-	end
+		
 	levels = {}
 	buttons = {}
+	options = 
+	{
+		fonts = 
+		{
+			standard = 
+			{
+				ttf = STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF",
+				size = 14,
+				color = {GameFontHighlightSmall:GetTextColor()},
+			},
+			title = 
+			{
+				ttf =  STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF",
+				size = 11,
+				color = {0.2,1,1,1}, --GameFontNormal:GetTextColor()},
+			},
+			notClickable =
+			{
+				ttf = "Fonts\\ARIALN.ttf", --MORPHEUS.TTF",
+				size = 6,
+				color = {GameFontNormalMed3:GetTextColor()},
+			},
+			disabled =
+			{
+				ttf = STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF",
+				size = 8,
+				color = {GameFontDisableSmall:GetTextColor()},
+			},
+		}
+	}
+end
 
-	if oldDeactivate then
-		oldDeactivate(oldLib)
+activate( )
+
+function Dewdrop:argCheck(arg, num, kind, kind2, kind3, kind4, kind5)
+	if type(num) ~= "number" then
+		return error(self, "Bad argument #3 to `argCheck' (number expected, got %s)", type(num))
+	elseif type(kind) ~= "string" then
+		return error(self, "Bad argument #4 to `argCheck' (string expected, got %s)", type(kind))
+	end
+	arg = type(arg)
+	if arg ~= kind and arg ~= kind2 and arg ~= kind3 and arg ~= kind4 and arg ~= kind5 then
+		local stack = debugstack()
+		local func = stack:match("`argCheck'.-([`<].-['>])")
+		if not func then
+			func = stack:match("([`<].-['>])")
+		end
+		if kind5 then
+			return error(self, "Bad argument #%s to %s (%s, %s, %s, %s, or %s expected, got %s)", tonumber(num) or 0/0, func, kind, kind2, kind3, kind4, kind5, arg)
+		elseif kind4 then
+			return error(self, "Bad argument #%s to %s (%s, %s, %s, or %s expected, got %s)", tonumber(num) or 0/0, func, kind, kind2, kind3, kind4, arg)
+		elseif kind3 then
+			return error(self, "Bad argument #%s to %s (%s, %s, or %s expected, got %s)", tonumber(num) or 0/0, func, kind, kind2, kind3, arg)
+		elseif kind2 then
+			return error(self, "Bad argument #%s to %s (%s or %s expected, got %s)", tonumber(num) or 0/0, func, kind, kind2, arg)
+		else
+			return error(self, "Bad argument #%s to %s (%s expected, got %s)", tonumber(num) or 0/0, func, kind, arg)
+		end
 	end
 end
 
-local function external(lib, major, instance)
-	if major == "LibSharedMedia-3.0" then
-		SharedMedia = instance
+function Dewdrop:error(message, ...)
+	if type(self) ~= "table" then
+		return _G.error(("Bad argument #1 to `error' (table expected, got %s)"):format(type(self)), 2)
 	end
+	
+	local stack = debugstack()
+	if not message then
+		local second = stack:match("\n(.-)\n")
+		message = "error raised! " .. second
+	else
+		local arg = { ... } -- not worried about table creation, as errors don't happen often
+		
+		for i = 1, #arg do
+			arg[i] = tostring(arg[i])
+		end
+		for i = 1, 10 do
+			table.insert(arg, "nil")
+		end
+		message = message:format(unpack(arg))
+	end
+	
+	if getmetatable(self) and getmetatable(self).__tostring then
+		message = ("%s: %s"):format(tostring(self), message)
+	elseif type(rawget(self, 'GetLibraryVersion')) == "function" and AceLibrary:HasInstance(self:GetLibraryVersion()) then
+		message = ("%s: %s"):format(self:GetLibraryVersion(), message)
+	elseif type(rawget(self, 'class')) == "table" and type(rawget(self.class, 'GetLibraryVersion')) == "function" and AceLibrary:HasInstance(self.class:GetLibraryVersion()) then
+		message = ("%s: %s"):format(self.class:GetLibraryVersion(), message)
+	end
+	
+	local first = stack:gsub("\n.*", "")
+	local file = first:gsub(".*\\(.*).lua:%d+: .*", "%1")
+	file = file:gsub("([%(%)%.%*%+%-%[%]%?%^%$%%])", "%%%1")
+	
+	
+	local i = 0
+	for s in stack:gmatch("\n([^\n]*)") do
+		i = i + 1
+		if not s:find(file .. "%.lua:%d+:") and not s:find("%(tail call%)") then
+			file = s:gsub("^.*\\(.*).lua:%d+: .*", "%1")
+			file = file:gsub("([%(%)%.%*%+%-%[%]%?%^%$%%])", "%%%1")
+			break
+		end
+	end
+	local j = 0
+	for s in stack:gmatch("\n([^\n]*)") do
+		j = j + 1
+		if j > i and not s:find(file .. "%.lua:%d+:") and not s:find("%(tail call%)") then
+			return _G.error(message, j+1)
+		end
+	end
+	return _G.error(message, 2)
 end
-
-AceLibrary:Register(Dewdrop, MAJOR_VERSION, MINOR_VERSION, activate, nil, external)

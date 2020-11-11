@@ -1,10 +1,9 @@
 if not LibStub then return end
 
-local dewdrop = LibStub('Dewdrop-2.0', true)
+local dewdrop = LibStub('LibDewdrop-3.0', true)
 local icon = LibStub('LibDBIcon-1.0')
 
 local _
-local IS_RETAIL = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 
 local CreateFrame = CreateFrame
 local C_ToyBox = C_ToyBox
@@ -62,6 +61,8 @@ local items = {
     87215,  -- Wormhole Generator: Pandaria
     112059, -- Wormhole Centrifuge
     151652, -- Wormhole Generator: Argus
+    168807, -- Wormhole Generator: Kul Tiras
+    168808, -- Wormhole Generator: Zandalar
     -- Seasonal items
     21711,  -- Lunar Festival Invitation
     37863,  -- Direbrew's Remote
@@ -120,7 +121,7 @@ local items = {
     144392, -- Pugilist's Powerful Punching Ring (Horde)
     151016, -- Fractured Necrolyte Skull
     166559, -- Commander's Signet of Battle
-    166560, -- Captain's Signet of Command
+    168862, -- G.E.A.R. Tracking Beacon
     -- items usable instead of hearthstone
     28585,  -- Ruby Slippers
     37118,  -- Scroll of Recall
@@ -133,7 +134,10 @@ local items = {
     163045, -- Headless Horseman's Hearthstone
     165669, -- Lunar Elder's Hearthstone
   	165670, -- Peddlefeet's Lovely Hearthstone
-    165802  -- Noble Gardener's Hearthstone
+    165802, -- Noble Gardener's Hearthstone
+    168862, -- G.E.A.R. Tracking Beacon
+    168907, -- Holographic Digitalization Hearthstone
+    172179  -- Eternal Traveler's Hearthstone
 }
 
 local scrolls = {
@@ -251,20 +255,17 @@ local function hasItem(itemID)
             end
         end
     end
-
-	if IS_RETAIL then
-		-- check Toybox
-		if PlayerHasToy(itemID) and C_ToyBox.IsToyUsable(itemID) then
-			local startTime, duration, cooldown
-			startTime, duration = GetItemCooldown(itemID)
-			cooldown = duration - (GetTime() - startTime)
-			if cooldown > 0 then
-				return false
-			else
-				return true
-			end
-		end
-	end
+    -- check Toybox
+    if PlayerHasToy(itemID) and C_ToyBox.IsToyUsable(itemID) then
+        local startTime, duration, cooldown
+        startTime, duration = GetItemCooldown(itemID)
+        cooldown = duration - (GetTime() - startTime)
+        if cooldown > 0 then
+            return false
+        else
+            return true
+        end
+    end
 
     return false
 end
@@ -431,7 +432,7 @@ local function GetScrollCooldown()
     local cooldown, startTime, duration
 
     for i = 1, #scrolls do
-        if GetItemCount(scrolls[i]) > 0 or (IS_RETAIL and PlayerHasToy(scrolls[i]) and C_ToyBox.IsToyUsable(scrolls[i])) then
+        if GetItemCount(scrolls[i]) > 0 or (PlayerHasToy(scrolls[i]) and C_ToyBox.IsToyUsable(scrolls[i])) then
             startTime, duration = GetItemCooldown(scrolls[i])
             cooldown = duration - (GetTime() - startTime)
             if cooldown <= 0 then
@@ -463,7 +464,7 @@ local function GetItemCooldowns()
     local cooldown, cooldowns, hours, mins, secs
 
     for i = 1, #items do
-        if GetItemCount(items[i]) > 0 or (IS_RETAIL and PlayerHasToy(items[i]) and C_ToyBox.IsToyUsable(items[i])) then
+        if GetItemCount(items[i]) > 0 or (PlayerHasToy(items[i]) and C_ToyBox.IsToyUsable(items[i])) then
             startTime, duration = GetItemCooldown(items[i])
             cooldown = duration - (GetTime() - startTime)
             if cooldown <= 0 then
@@ -578,6 +579,8 @@ local function ToggleMinimap()
 end
 
 local function UpdateMenu(level, value)
+    dewdrop:SetFontSize(PortalsDB.fontSize)
+
     if level == 1 then
         dewdrop:AddLine('text', 'Broker_Portals', 'isTitle', true)
 
