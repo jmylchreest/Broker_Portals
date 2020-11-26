@@ -137,7 +137,8 @@ local items = {
     165802, -- Noble Gardener's Hearthstone
     168862, -- G.E.A.R. Tracking Beacon
     168907, -- Holographic Digitalization Hearthstone
-    172179  -- Eternal Traveler's Hearthstone
+    172179, -- Eternal Traveler's Hearthstone
+    180817  -- Cypher of Relocation
 }
 
 local scrolls = {
